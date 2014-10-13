@@ -51,8 +51,20 @@ int main( int argc, char *argv[] )
         c = *p;
         
         if( isdigit(c)) {
-            
+            //printf("%d\n", atoi(&c);
             // INSERT CODE FOR JUMPING TO MESSAGE k
+            int temp = c - '0';
+            if (temp > globalMessageNum) {
+                printf("message %d doesn't exist\n", temp);
+            } else {
+                MsgNode target = list;
+                int i = 1; //globalMessageCount starts at 1...
+                while (i < temp) {
+                    target = target -> next;
+                    i++;
+                }
+                printFull(target);
+            }
         }
         else switch( c ) {
                 /*
@@ -100,7 +112,8 @@ int main( int argc, char *argv[] )
                 break;
                 
             case 'd': case 'D':
-                //move down
+                //delete message
+                focus -> deleted = true;
                 break;
             
             case 'r': case 'R':
@@ -245,7 +258,7 @@ char * getText( void )
     int ch;
     int i;
     
-    printf("Text: ");
+    printf("Text: \n");
     ch = getchar();
     i=0;
     while(( i < MAX_TEXT )&&( ch != EOF )) {
