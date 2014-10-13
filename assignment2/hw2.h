@@ -78,12 +78,12 @@ void    freeList( MsgNode head );
 
 //bool  dateCheck ();
 bool isLeapYear (int year);
-MsgNode addNode (MsgNode list, MsgNode node);
 void printList (MsgNode head);
 void amIFocused (MsgNode msg);
 MsgNode findFocus (MsgNode head);
 void insertNode (MsgNode focus, MsgNode node);
 MsgNode sherlock (MsgNode list, int msgID);
+MsgNode addReply (MsgNode list, MsgNode focus);
 
 // Don't touch below this point.
 #endif /* !defined(HW2_H) */

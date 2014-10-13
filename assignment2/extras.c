@@ -30,21 +30,6 @@ bool isLeapYear (int year) {
     return result;
 }
 
-MsgNode addNode (MsgNode list, MsgNode node) {
-    
-    if (list == NULL) {
-        list = node;
-    } else {
-        while (list -> next != NULL) {
-            list = list -> next;
-        }
-    
-        list -> next = node;
-    }
-    
-    return list;
-}
-
 void printList ( MsgNode head) {
     
     while (head != NULL) {
@@ -84,6 +69,9 @@ MsgNode findFocus (MsgNode head) {
     return focus;
 }
 
+/** inserts a node after another (the focus).
+ *
+ */
 void insertNode ( MsgNode focus, MsgNode node )
 {
     if (focus == NULL) {
@@ -97,6 +85,9 @@ void insertNode ( MsgNode focus, MsgNode node )
     
 }
 
+/** just like eponymous hero, this function searches along the list
+ * to find the message you want given a messageID (messageNum)
+ */
 MsgNode sherlock (MsgNode list, int msgID) {
     MsgNode target = list;
     int i = 1; //globalMessageCount starts at 1...
@@ -107,6 +98,53 @@ MsgNode sherlock (MsgNode list, int msgID) {
     
     return target;
 }
+
+/** Function to reply to a focused message. Takes in a list and focus
+ * returns the address of the node.
+ */
+MsgNode addReply (MsgNode list, MsgNode focus) {
+    
+    if (list == NULL) {
+        return NULL;
+    }
+    
+    MsgNode node;
+    node = getNode();
+    node -> focus = true;
+    node -> inReplyTo = focus -> messageNum;
+    node -> indent = focus -> indent + 1;
+    printFull( node );
+    
+    insertNode(sherlock(list, globalMessageNum - 1
+                        ), node);
+    focus -> focus = false;
+    return node;
+}
+
+/** Function to add a node. Takes in list and focus 
+ * and returns the address of the new node.
+ */
+MsgNode addNode (MsgNode list, MsgNode focus) {
+    MsgNode node;
+    
+    node = getNode();
+    printFull( node );
+    node -> focus = true;
+    
+    if (list == NULL) {
+        list = node;
+        printf("list got assigned\n");
+    } else {
+        //grrr... alan and his i++ usage.
+        insertNode(sherlock(list, globalMessageNum - 1
+                            ), node);
+        focus -> focus = false;
+    }
+    
+    return node;
+}
+
+
 
 // Local Variables:
 // c-basic-offset: 4

@@ -69,20 +69,20 @@ int main( int argc, char *argv[] )
                 printFull(sherlock(list, temp));
             }
         }
-        else switch( c ) {
+        else switch(tolower(c)) {
                 /*
                  * "Enter command (A,F,B,P,L,D,R,T,S,U,Q, H for Help): "
                  */
-            case 'a': case 'A': // Add item
+            case 'a': // Add item
                 // MODIFY THIS CODE, AS APPROPRIATE
                 node = getNode();
                 printFull( node );
                 node -> focus = true;
+                
                 if (list == NULL) {
                     list = node;
                     printf("list got assigned\n");
                 } else {
-                    //grrr... alan and his i++ usage.
                     insertNode(sherlock(list, globalMessageNum - 1
                                         ), node);
                     focus -> focus = false;
@@ -92,6 +92,7 @@ int main( int argc, char *argv[] )
                 if (idiotBack) {
                     printList(list);
                 }
+                
                 break;
                 
                 // INSERT CODE HERE
@@ -99,7 +100,7 @@ int main( int argc, char *argv[] )
                 // TO IMPLEMENT OTHER COMMANDS
                 
                 //thankyou alan;
-            case 'f': case 'F':
+            case 'f':
                 //moves forward
                 if (focus -> next != NULL) {
                     focus -> focus = false;
@@ -109,7 +110,7 @@ int main( int argc, char *argv[] )
                 }
                 break;
             
-            case 'b': case 'B':
+            case 'b':
                 //moves back
                 focus -> focus = false;
                 focus = sherlock(list, ((focus -> messageNum) - 1));
@@ -118,37 +119,46 @@ int main( int argc, char *argv[] )
                 printList(list);
                 break;
             
-            case 'p': case 'P':
+            case 'p':
                 //prints the thingos
                 printFull( list );
                 break;
                 
-            case 'l': case 'L':
+            case 'l':
                 //lists the thingos
                 printList( list );
                 break;
                 
-            case 'h': case 'H': // Help
+            case 'h':
+                // Help
                 printHelp();
                 break;
                 
-            case 'd': case 'D':
+            case 'd':
                 //delete message
                 focus -> deleted = true;
                 break;
             
-            case 'r': case 'R':
+            case 'r':
+                //reply to a message
+                focus = addReply(list, focus);
+                
+                if (idiotBack) {
+                    printList(list);
+                }
+                
                 break;
             
-            case 't': case 'T':
+            case 't':
                 break;
             
-            case 's': case 'S':
+            case 's':
                 break;
             
-            case 'u': case 'U':
+            case 'u':
                 break;
-            case 'q': case 'Q': // Quit
+            case 'q':
+                // Quit
                 freeList( list );
                 printf("Bye!\n");
                 return 0;
