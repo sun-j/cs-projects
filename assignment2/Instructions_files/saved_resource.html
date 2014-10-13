@@ -1,0 +1,386 @@
+<!DOCTYPE html PUBLIC "-//IETF//DTD HTML 2.0//EN">
+<!-- saved from url=(0044)http://www.cse.unsw.edu.au/~cs1917/14s2/hw2/ -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<title>COMP1917 Project 2</title>
+<style type="text/css"></style></head>
+<body lang="EN" marginwidth="10" marginheight="0">
+<h2 align="center">COMP1917 Computing 1</h2>
+<h2 align="center">Session 2, 2014</h2>
+<h3 align="center">Project 2 - Message Board</h3>
+<p align="center">
+Due: Sunday 19 October, 11:59 pm
+<br align="center">
+Marks: 12% of final assessment
+
+</p><h4>Introduction</h4>
+
+One of the most popular means of exchanging information
+these days is the Message Board.
+In this project, you will be writing a C program
+to implement a simple text-based Message Board which allows
+messages to be added, deleted, listed, sorted
+and organized into Threads.
+
+<h4>Stage 0 - Provided Code</h4>
+
+We have provided a program in the directory
+<a href="http://www.cse.unsw.edu.au/~cs1917/14s2/hw2/src"><code>hw2/src</code></a>
+as a base for you to begin the assignment.
+Notice that it consists of the source file <code>hw2.c</code>
+and the header file <code>hw2.h</code>.
+Copy these files to your own directory and compile
+them by typing
+<pre>gcc -Wall -o hw2 hw2.c
+</pre>
+Now run the program.
+You will be presented with these options:
+<pre>Enter command (A,L,P,F,B,D,R,T,S,U,Q, H for Help): 
+</pre>
+If you type '<code>h</code>' for Help, you will see
+a more detailed list of commands:
+<pre> A - Add
+ L - List
+ P - Print
+ F - Forward
+ B - Back
+&lt;k&gt;- jump to message k
+ D - Delete
+ R - Reply
+ T - Threads
+ S - Search
+ U - Undo
+ Q - Quit
+ H - Help
+</pre>
+Now type '<code>a</code>' to Add a message.
+You will be invited to enter the following data:
+<pre>Name: (a one-line string)
+Date: (in the format dd/mm/yyyy)
+Time: (in the format hh:mm:ss)
+Text: (free-form text which may extend over several lines)
+</pre>
+You signal the end of the "Text" by typing a dot '.'
+on a line by itself.
+You will see that the program then prints the message
+you have entered, using the function <code>printList()</code>.
+<p>
+When you have finished, type '<code>q</code>' to Quit.
+
+</p><h4>Stage 1 - Writing a Makefile, checking dates</h4>
+
+<ol type="a">
+
+<li>
+Write a <code>Makefile</code> as discussed in Lab 8,
+so that the program will be re-compiled
+when you type "<code>make</code>",
+producing an executable called <code>hw2</code>.
+<p>
+
+</p></li><li>
+Write code for the function <code>dateOK()</code>
+to check whether the date entered actually exists
+(for example, <code>29/02/2014</code> does not exist).
+You should assume that all dates are later than 1582
+and conform to the Gregorian Calendar.
+
+</li></ol>
+
+<h4>Stage 2 - Adding, listing and printing items</h4>
+
+For Stage 2, you will need to implement (or complete) these commands:
+<pre> A - Add
+ L - List
+ P - Print
+</pre>
+
+You will need to complete the coding for the <code>A</code> command
+so that it links the newly-created node into a linked list.
+The items should be listed in the order in which they were entered
+(i.e. in order of increasing <code>messageNum</code>), which means
+that each newly added node will go to the end of the list.
+<p>
+
+The <code>L</code> and <code>P</code> commands
+should toggle the program between two different
+printing "modes" - "Brief" and "Full".
+In "Brief" mode, the program should print the list
+of all messages, in the following format:
+</p><pre>   1 John: Twist and Shout!
+   2 Paul: I read the news today, oh boy!
+   3 George: Here comes the sun!
+-&gt; 4 Ringo: I'd like to be under the sea
+</pre>
+Each message should occupy one line.
+The "current item" (in this case, the most recently added one)
+should be distinguished by the characters
+"<code>-&gt;</code>" at the beginning of the line;
+the other items should begin their line with two blank spaces.
+The <code>messageNum</code> should then be printed in the format
+"<code>%2d</code>",
+followed by a blank space. Your program should then call the
+function <code>printBrief()</code> which prints the Name and
+the first line of the Text.
+In "Full" mode, only the current item should be printed,
+using the function <code>printFull()</code>,
+which prints the message in this format:
+<pre>Message 4
+Date: 26/09/1969 
+Time: 10:08:42
+Name: Ringo
+Text: I'd like to be under the sea
+in an Octopus's garden in the shade.
+</pre>
+After each successful <code>A,L,P,F,B,&lt;k&gt;,D,R,T</code> or <code>U</code>
+command, your program should either print the
+entire list of items or the current message,
+depending on the current printing mode.
+
+<h4>Stage 3 - Navigating the list</h4>
+
+For Stage 3, you will need to implement these commands:
+<pre> F - Forward
+ B - Back
+&lt;k&gt;- jump to message k
+ D - Delete
+</pre>
+The <code>F</code> and <code>B</code> commands
+allow the user to move Forward and Back in the list
+by changing which item is the "current" item.
+The <code>F</code> command finds the next item
+after the current item and makes it the current item.
+The <code>B</code> command finds the previous item
+to the current item, and makes it the current item.
+The <code>F</code> command fails (has no effect)
+if the current item is the last item in the list;
+<code>B</code> has no effect
+if the current item is the first item in the list.
+<p>
+When a number is typed, your program should find
+the item with that <code>messageNum</code>
+and make it the current item.
+If there is no item with that <code>messageNum</code>,
+the command has no effect.
+</p><p>
+The <code>D</code> command should mark the current item as
+"Deleted" by setting <code>msg-&gt;deleted</code> to <code>TRUE</code>.
+In "Brief" mode, deleted items should still be included
+in the list but with the word "<code>[deleted]</code>"
+in place of the Name and Text, for example:
+</p><pre>   1 John: Twist and Shout!
+   2 Paul: I read the news today, oh boy!
+-&gt; 3 [deleted]
+   4 Ringo: I'd like to be under the sea
+</pre>
+In "Full" mode, the function <code>printFull()</code>
+will print the deleted message like this:
+<pre>Message 3 has been deleted.
+</pre>
+When applied to a message that has already been deleted,
+the <code>D</code> command should have no effect.
+
+<h4>Stage 4 - Replying and Threads</h4>
+
+For Stage 4 you are to implement the commands:
+<pre> R - Reply
+ T - Threads
+</pre>
+
+The <code>R</code> command should have the same effect
+as the <code>A</code> command, except that the <code>inReplyTo</code>
+field in the new message should be set equal to the
+<code>messageNum</code>
+of the current message.
+<p>
+The <code>T</code> command should switch the printing mode to "Brief"
+and also change the order of the messages
+in the list so they are listed <em>by Thread</em>, as follows:
+</p><p>
+The message with the lowest <code>MessageNum</code> should
+remain the first item in the list.
+After that, any replies to that message should be listed, and any
+replies to those replies, etc., recursively (these messages constitute
+the "Thread" of the original message).
+After the messages in the thread of the original message have been listed,
+the earliest (lowest) of the remaining messages should come next in the list,
+followed by the messages in the Thread of that message,
+then the earliest of the remaining messages, etc. until all messages have been listed.
+</p><p>
+When the items are printed, each reply should be indented
+three spaces more than the message to which it is replying.
+For example, if Message 3 had been posted in reply to Message 1,
+and Message 4 had been posted in reply to Message 3, then the
+list should print like this:
+</p><pre>   1 John: Twist and Shout!
+   3    George: Here comes the sun!
+-&gt; 4       Ringo: I'd like to be under the sea
+   2 Paul: I read the news today, oh boy!
+</pre>
+When the items are ordered by Threads, each newly entered Reply
+will not necessarily go to the end of the list but should instead
+be inserted into its proper place, according to Threads.
+<p>
+Any subsequent <code>L</code> command, as well as switching to
+"Brief" mode, should change the order of the messages
+in the list so that they are listed strictly in order of increasing
+<code>messageNum</code>,
+with no indentation (as described in Stage 2 above).
+
+</p><h4>Stage 5 - Searching the list</h4>
+
+For Stage 5 you are to implement a search command:
+<pre> S - Search items
+</pre>
+The <code>S</code> command should:
+
+<ol type="a">
+<li>prompt the user like this:
+<pre>Search text: 
+</pre>
+
+</li><li>
+scan one line of text into an array of <code>char</code>
+(until the first newline character is encountered,
+or the maximum of 256 characters is exceeded)
+<p>
+
+</p></li><li>
+search for all messages containing the search text
+within their Name or Text. Note that the search should
+NOT be case-sensitive (i.e. the strings "text" and "Text"
+<b>do</b> match).
+For each message where
+text appears in these fields, print the entire message,
+in the same format as the <code>printFull()</code> function
+described in Stage 2.
+The search text should be highlighted, wherever it
+occurs in the Name or Text field,
+by converting all lowercase letters to uppercase.
+Note that the actual contents of these fields should not be
+modified in any way.
+If the message is subsequently printed, it should appear as normal.
+
+</li></ol>
+
+<h4>Stage 6 - Undo</h4>
+
+For Stage 6, you need to implement one final command:
+<pre> U - Undo
+</pre>
+If the previous command was
+<code>A,L,P,F,B,&lt;k&gt;,D,R</code> or <code>T</code>,
+the <code>U</code> command should undo the previous command
+and return the list to its prior state.
+If the previous command was <code>H,S</code> or <code>U</code>,
+or if it had no effect,
+the <code>U</code> command should have no effect.
+(You do not have to Undo the Undo!)
+
+<h4>Sample files and tools</h4>
+
+Examples of input files are provided
+in the directory <a href="http://www.cse.unsw.edu.au/~cs1917/14s2/hw2/sample"><code>hw2/sample</code></a>.
+<p>
+A compiled solution to the assignment has be provided for you in the
+<code><a href="http://www.cse.unsw.edu.au/~cs1917/14s2/hw2/tools">tools</a></code> directory.<br>
+Your program should produce EXACTLY the same output as this executable.
+</p><p>
+Feel free to copy chunks of code from the
+<a href="http://www.cse.unsw.edu.au/~cs1917/14s2/lab/lab9/list.c"><code>list.c</code></a> program,
+if you find it helpful.
+
+</p><h4>Groups</h4>
+
+This assignment may be done individually, or in groups of two students.
+Each group should send an email to <code>cs1917.hw2@cse.unsw.edu.au</code>
+by 30 September, indicating the names of the group member(s).
+We will then assign you an <code>hw2group</code> number.
+If you intend to do the assignment on your own,
+please send us an email for that as well.
+If you are working in a group, you are strongly advised to make use of
+file sharing tools like Apache Subversion or DropBox
+(which are safer and more convenient that emailing code back and forth
+to each other).
+
+<h4>Submission</h4>
+
+For this project you will need to submit a <code>Makefile</code> as well as
+program files (<code>.c</code> and <code>.h</code> files).
+<p>
+Once you have been assigned an <code>hw2group</code> number,
+you should submit by typing
+</p><p>
+<code>give cs1917 hw2 Makefile *.[ch]</code>
+</p><p>
+Please ensure that you submit the source files and NOT any
+binary file (i.e., compiled <code>hw2</code> or <code>.o</code> files).
+There is no need to submit the binary file as we will compile
+your program using your <code>Makefile</code> before testing it via the
+automarking program.
+It is therefore VERY IMPORTANT that you include a <code>Makefile</code>
+in your submission and that, when run with the <code>make</code>
+command, it will produce a compiled binary file called <code>hw2</code>
+which performs exactly as described in the specification.
+</p><p>
+Only one member of the group needs to submit.
+You can submit as many times as you like - later submissions
+(by either member of the group) will overwrite earlier ones.
+You can check that your submission
+has been received by using the following command:
+</p><p>
+<tt>1917 classrun -check</tt>
+</p><p>
+The submission deadline is Sunday 19 October, 11:59 pm<br>
+15% penalty will be applied to the (maximum) mark
+for every 24 hours late after the deadline.
+</p><p>
+Additional information may be found in the
+<a href="http://www.cse.unsw.edu.au/~cs1917/14s2/hw2/faq.shtml">FAQ</a>
+and will be considered as part of the specification for the project.
+Questions relating to the project can also be posted to the
+MessageBoard on the course Web page.
+</p><p>
+If you have a question that has not already been answered on the FAQ
+or the MessageBoard, you can email it to your tutor,
+or to <code>cs1917.hw2@cse.unsw.edu.au</code>
+
+</p><h4>Marking</h4>
+
+This project will be marked on functionality in the first instance,
+so it is very important that the output of your program
+be EXACTLY correct.
+Submissions which score very low on the automarking
+will be looked at by a human and may receive a few marks,
+provided the code is well-structured and commented.
+<p>
+Programs that generate compilation errors will
+receive a very low mark, no matter what other
+virtues they may have.
+In general, a program that attempts a substantial
+part of the job but does that part correctly
+will receive more marks than one attempting to do
+the entire job but with many errors.
+
+</p><h4>Plagiarism Policy</h4>
+<p>
+Your program must be entirely your own work.
+Plagiarism detection software will be used to compare all submissions pairwise
+(as well as submissions for similar assignments from previous years, if appropriate)
+and serious penalties will be applied, particularly in the case
+of repeat offences.
+</p><p>
+<b>DO NOT COPY FROM OTHERS; DO NOT ALLOW ANYONE TO SEE YOUR CODE</b>
+</p><p>
+Please refer to the
+<a href="http://www.cse.unsw.edu.au/people/studentoffice/policies/yellowform.html">Yellow Form</a>,
+as well as the
+<a href="http://www.cse.unsw.edu.au/~chak/plagiarism">CSE Addendum to the UNSW Plagiarism Policy</a>
+if you require further clarification on this matter.
+</p><p>
+</p><p>
+Good luck!
+<br>
+</p><hr>
+
+
+</body></html>

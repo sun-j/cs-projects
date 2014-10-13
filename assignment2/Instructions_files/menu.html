@@ -1,0 +1,87 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!-- saved from url=(0077)http://webapps.cse.unsw.edu.au/webcms2/course/menu.php?cid=2370&color=colour8 -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+ <title>COMP1917 - Menu</title>
+
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="expires" content="0">
+<script type="text/javascript" src="jquery-1.3.2.min.js"></script><style type="text/css"></style>
+<script type="text/javascript" src="new.jquery-ui.custom.min.js"></script>
+<link rel="stylesheet" type="text/css" href="new.jquery-ui.custom.css">
+<link rel="stylesheet" type="text/css" href="menu.css">
+<style type="text/css">
+body {color:#000000;background-color:#E6E6FA;}
+a {color:#000000;}
+input.menu {background:#E6E6FA; color:#000000; font-size:x-small; margin:0; padding:0; border-width:0; width:12px; height:15px}
+input.menu:hover {color:#000000;background:#FFFFCC;}
+</style>
+<script language="JavaScript">
+
+function checkForm(form)
+{
+	if (form.username.value == "")
+	{
+		alert("Please enter username");
+		form.username.focus();
+		return false;
+	}
+	if (form.password.value=="")
+	{
+		alert("Pleaser enter password");
+		form.password.focus();
+		return false;
+	}
+	return true;
+}
+function expand(name) {
+	var show = document.getElementById(name).style.display;
+	var view = "none"
+	if(show == "none")
+		view = "block";
+	document.getElementById(name).style.display = view;
+}
+
+function alterValue(button) {
+	if(button.value == "+")
+		button.value = "-";
+	else if(button.value == "-")
+		button.value = "+";
+	return true;
+}
+</script>
+</head>
+<body marginwidth="0" marginheight="0">
+<nobr><a href="http://webapps.cse.unsw.edu.au/webcms2/login/login.php" target="_top">WebCMS<small>2</small></a></nobr><span class="at">@</span><nobr><a href="http://www.cse.unsw.edu.au/" target="_top"><span class="cse">CSE</span></a></nobr><span class="at">@</span><nobr><a href="http://www.unsw.edu.au/" target="_top"><span class="cse">UNSW</span></a></nobr><br><p><span class="ccode"><a target="_top" href="http://www.cse.unsw.edu.au/~cs1917/">COMP1917</a></span>14s2<br><span class="title">Computing 1</span></p><div class="sec">•&nbsp;<b><nobr><a href="http://webapps.cse.unsw.edu.au/webcms2/notice/index.php?cid=2370&color=colour8" target="main" title="You can view course notices here" onmouseover="window.status=&quot;&quot;; return true">Notices</a></nobr></b><br>
+<div id="l17900"></div></div><div class="sec">•&nbsp;<b><nobr><a href="http://webapps.cse.unsw.edu.au/webcms2/calendar/index.php?cid=2370&color=colour8" target="main" title="You can view course events here" onmouseover="window.status=&quot;&quot;; return true">Calendar</a></nobr></b><br>
+<div id="l17901"></div></div><div class="sec">•&nbsp;<b><nobr><a href="http://webapps.cse.unsw.edu.au/webcms2/intro/index.php?cid=2370&color=colour8" target="main" title="Course intro" onmouseover="window.status=&quot;&quot;; return true">Course Outline</a></nobr></b><br>
+<div id="l17902"></div></div><div class="sec"><nobr><a href="http://webapps.cse.unsw.edu.au/webcms2/course/menu.php?cid=2370&color=colour8#" onclick="expand(&quot;l17903&quot;)">+</a></nobr>&nbsp;<b><nobr>Administration</nobr></b><br>
+<div id="l17903">|–&nbsp;<nobr><a href="http://webapps.cse.unsw.edu.au/webcms2/class/index.php?cid=2370&color=colour8" target="main" title="You can view classes time here" onmouseover="window.status=&quot;&quot;; return true">Classes</a></nobr><br>
+|–&nbsp;<nobr><a href="http://www.cse.unsw.edu.au/~cs1917/14s2/style_guide.html" target="main">Style Guide</a></nobr><br>
+|–&nbsp;<nobr><a href="http://www.cse.unsw.edu.au/~cs1917/14s2/homecomputing.html" target="main">HomeComputing</a></nobr><br>
+|–&nbsp;<nobr><a href="http://www.cse.unsw.edu.au/~cs1917/14s2/exam/CReferenceCard.pdf" target="main">C Reference Card</a></nobr><br>
+|–&nbsp;<nobr><a href="http://www.cse.unsw.edu.au/~cs1917/14s2/exam/PracSample.pdf" target="main">Prac Exam Instructions</a></nobr><br>
+</div></div><div class="sec"><nobr><a href="http://webapps.cse.unsw.edu.au/webcms2/course/menu.php?cid=2370&color=colour8#" onclick="expand(&quot;l17905&quot;)">+</a></nobr>&nbsp;<b><nobr>CourseWork</nobr></b><br>
+<div id="l17905">|–&nbsp;<nobr><a href="http://webapps.cse.unsw.edu.au/webcms2/works/index.php?inc=LE&cid=2370&color=colour8" target="main" title="Lecture material" onmouseover="window.status=&quot;&quot;; return true">Lectures</a></nobr><br>
+|–&nbsp;<nobr><a href="http://webapps.cse.unsw.edu.au/webcms2/works/index.php?inc=TU&cid=2370&color=colour8" target="main" title="Tutorial exercises" onmouseover="window.status=&quot;&quot;; return true">Tutorials</a></nobr><br>
+|–&nbsp;<nobr><a href="http://webapps.cse.unsw.edu.au/webcms2/works/index.php?inc=LB&cid=2370&color=colour8" target="main" title="Lab exercises" onmouseover="window.status=&quot;&quot;; return true">Labs</a></nobr><br>
+|–&nbsp;<nobr><a href="https://lectures.unsw.edu.au/ess/portal/section/6e677ca7-cdcf-4792-a44a-904f4d7d9567" target="main">Echo 360</a></nobr><br>
+|–&nbsp;<nobr><a href="https://moodle.telt.unsw.edu.au/" target="_blank">Moodle</a></nobr><br>
+|–&nbsp;<nobr><a href="http://www.cse.unsw.edu.au/~cs1917/14s2/code" target="main">Code</a></nobr><br>
+</div></div><div class="sec"><nobr><a href="http://webapps.cse.unsw.edu.au/webcms2/course/menu.php?cid=2370&color=colour8#" onclick="expand(&quot;l18217&quot;)">+</a></nobr>&nbsp;<b><nobr>Assignments</nobr></b><br>
+<div id="l18217">|–&nbsp;<nobr><a href="http://www.cse.unsw.edu.au/~cs1917/14s2/hw1" target="main">hw1 - Tennis Score</a></nobr><br>
+|–&nbsp;<nobr><a href="http://www.cse.unsw.edu.au/~cs1917/14s2/hw1/faq.shtml" target="main">hw1 FAQ</a></nobr><br>
+|–&nbsp;<nobr><a href="http://www.cse.unsw.edu.au/~cs1917/14s2/hw2" target="main">hw2 - Message Board</a></nobr><br>
+|–&nbsp;<nobr><a href="http://www.cse.unsw.edu.au/~cs1917/14s2/hw2/faq.shtml" target="main">hw2 FAQ</a></nobr><br>
+</div></div><div class="sec"><div id="l17907"></div></div><div class="sec"><nobr><a href="http://webapps.cse.unsw.edu.au/webcms2/course/menu.php?cid=2370&color=colour8#" onclick="expand(&quot;l17911&quot;)">+</a></nobr>&nbsp;<b><nobr>Staff</nobr></b><br>
+<div id="l17911">|–&nbsp;<nobr><a href="http://www.cse.unsw.edu.au/~blair/?cid=2370&color=colour8" target="main">Alan Blair</a></nobr><br>
+</div></div><div class="sec">•&nbsp;<b><nobr><a href="http://webapps.cse.unsw.edu.au/webcms2/messageboard/index.php?cid=2370&color=colour8" target="main" title="You can post messages here" onmouseover="window.status=&quot;&quot;; return true">MessageBoard</a></nobr></b><br>
+<div id="l17943"></div></div><p>• <nobr><b></b></nobr><b><nobr><a href="http://webapps.cse.unsw.edu.au/webcms2/course/help.php" target="main" title="Click here for WebCMS help" onmouseover="window.status=&quot;&quot;; return true">WebCMS Info</a></nobr></b><br><span style="font-size:9pt;">
+|- <a target="_top" href="http://webapps.cse.unsw.edu.au/webcms2/user/change.php">Change Password?</a>
+<br>
+|- <a target="_top" href="http://webapps.cse.unsw.edu.au/webcms2/user/new.php">Forgot Password?</a>
+</span></p><form method="post" action="http://webapps.cse.unsw.edu.au/webcms2/course/index.php?cid=2370&color=colour8" target="_top" onsubmit="return checkForm(this)">
+<p><b>Status:</b><br>Not Logged In</p><p>Username:<br><input type="text" name="username" value="" size="10"><br>Password:<br><input type="password" name="password" value="" size="10"><br><br><input type="submit" name="" value="Login"></p><p style="font-size:7pt;">CRICOS Provider No. 00098G</p>
+</form>
+
+
+</body></html>
