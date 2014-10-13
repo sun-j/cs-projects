@@ -79,7 +79,7 @@ MsgNode findFocus (MsgNode head) {
         head = head -> next;
     } while (head != '\0');
     
-    assert(focusCount == 1 || globalMessageNum == 1);
+    assert(focusCount == 1 || globalMessageNum == 0);
     
     return focus;
 }

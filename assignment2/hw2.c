@@ -21,7 +21,7 @@
 
 #include "hw2.h"
 
-int globalMessageNum = 1;
+int globalMessageNum = 0;
 
 
 int main( int argc, char *argv[] )
@@ -31,6 +31,15 @@ int main( int argc, char *argv[] )
     MsgNode focus;
     char command[MAX_LINE];
     char c;
+    /** Idiot Prevention Code
+     * the following variables are variables that are used to
+     * counter non-algorithmic issues that arose during
+     * testing i.e. output doesn't match standard output.
+     */
+    
+    //as soon as b was pressed once, every time
+    //a was pressed, it would always printBrief()
+    bool idiotBack = false;
     
     printPrompt();
     
@@ -73,8 +82,15 @@ int main( int argc, char *argv[] )
                     list = node;
                     printf("list got assigned\n");
                 } else {
+                    //grrr... alan and his i++ usage.
+                    insertNode(sherlock(list, globalMessageNum - 1
+                                        ), node);
                     focus -> focus = false;
-                    insertNode(focus, node);
+                    focus = node;
+                }
+                
+                if (idiotBack) {
+                    printList(list);
                 }
                 break;
                 
@@ -85,10 +101,21 @@ int main( int argc, char *argv[] )
                 //thankyou alan;
             case 'f': case 'F':
                 //moves forward
+                if (focus -> next != NULL) {
+                    focus -> focus = false;
+                    focus = focus -> next;
+                    focus -> focus = true;
+                    printList(list);
+                }
                 break;
             
             case 'b': case 'B':
                 //moves back
+                focus -> focus = false;
+                focus = sherlock(list, ((focus -> messageNum) - 1));
+                focus -> focus = true;
+                idiotBack = true;
+                printList(list);
                 break;
             
             case 'p': case 'P':
@@ -186,7 +213,7 @@ MsgNode getNode( void )
         printf("Error: could not allocate memory.\n");
         exit( 1 );
     }
-    newNode->messageNum = globalMessageNum++;
+    newNode->messageNum = ++globalMessageNum;
     newNode->name       = getName();
     newNode->date = calloc(1, sizeof(struct date));
     getDate( newNode->date );
@@ -425,6 +452,7 @@ void printBrief( MsgNode msg )
 {
     char *text=msg->text;
     int i=0,j=0;
+    printf("%d ", msg->messageNum);
     if( msg->deleted ) {
         printf("[deleted]\n");
     }
