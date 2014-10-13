@@ -83,6 +83,9 @@ void printList (MsgNode head);
 void amIFocused (MsgNode msg);
 MsgNode findFocus (MsgNode head);
 void insertNode (MsgNode focus, MsgNode node);
+MsgNode sherlock (MsgNode list, int msgID);
+
+// Don't touch below this point.
 #endif /* !defined(HW2_H) */
 
 // Local Variables:

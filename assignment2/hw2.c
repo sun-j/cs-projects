@@ -57,13 +57,7 @@ int main( int argc, char *argv[] )
             if (temp > globalMessageNum) {
                 printf("message %d doesn't exist\n", temp);
             } else {
-                MsgNode target = list;
-                int i = 1; //globalMessageCount starts at 1...
-                while (i < temp) {
-                    target = target -> next;
-                    i++;
-                }
-                printFull(target);
+                printFull(sherlock(list, temp));
             }
         }
         else switch( c ) {

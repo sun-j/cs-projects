@@ -97,6 +97,17 @@ void insertNode ( MsgNode focus, MsgNode node )
     
 }
 
+MsgNode sherlock (MsgNode list, int msgID) {
+    MsgNode target = list;
+    int i = 1; //globalMessageCount starts at 1...
+    while (i < msgID) {
+        target = target -> next;
+        i++;
+    }
+    
+    return target;
+}
+
 // Local Variables:
 // c-basic-offset: 4
 // End:
