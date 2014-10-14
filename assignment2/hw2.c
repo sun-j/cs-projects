@@ -29,6 +29,7 @@ int main( int argc, char *argv[] )
     MsgNode list = NULL;
     MsgNode node;
     MsgNode focus;
+    TinyNode head = calloc(1, sizeof(struct tinyNode));
     char command[MAX_LINE];
     char c;
     /** Idiot Prevention Code
@@ -36,7 +37,6 @@ int main( int argc, char *argv[] )
      * counter non-algorithmic issues that arose during
      * testing i.e. output doesn't match standard output.
      */
-    
     //as soon as b was pressed once, every time
     //a was pressed, it would always printBrief()
     bool idiotBack = false;
@@ -81,10 +81,12 @@ int main( int argc, char *argv[] )
                 
                 if (list == NULL) {
                     list = node;
+                    relinker(head, node);
                     printf("list got assigned\n");
                 } else {
                     insertNode(sherlock(list, globalMessageNum - 1
                                         ), node);
+                    relinker(head, node);
                     focus -> focus = false;
                     focus = node;
                 }
@@ -142,6 +144,7 @@ int main( int argc, char *argv[] )
             case 'r':
                 //reply to a message
                 focus = addReply(list, focus);
+                relinker(head, focus);
                 
                 if (idiotBack) {
                     printList(list);
@@ -150,6 +153,11 @@ int main( int argc, char *argv[] )
                 break;
             
             case 't':
+                //toggle t mode
+                if (list != NULL) {
+                    printTree(head);
+                }
+                
                 break;
             
             case 's':
@@ -339,12 +347,12 @@ int scanDate( Date d )
     
     fgets( s, MAX_LINE, stdin );
     if(sscanf(s,"%d/%d/%d",&d->day,&d->month,&d->year)<3){
-        return FALSE;
+        return false;
     }
     if( d->year < 100 ) { // turn /12 into /2012, etc.
         d->year = 2000 + d->year;
     }
-    return TRUE;
+    return true;
 }
 
 /************************************************************
@@ -458,7 +466,7 @@ void printTime( Time t )
 /************************************************************
  Print the Name, followed by the first line of the Text.
  */
-void printBrief( MsgNode msg )
+void printBrief( MsgNode msg , bool t)
 {
     char *text=msg->text;
     int i=0,j=0;
@@ -467,6 +475,9 @@ void printBrief( MsgNode msg )
         printf("[deleted]\n");
     }
     else {
+        if (t == true) {
+            printIndent(msg -> indent);
+        }
         printf("%s: ", msg->name );
         while( isspace( text[i] )) {
             i++;

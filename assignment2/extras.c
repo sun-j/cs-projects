@@ -2,11 +2,12 @@
  * Contained within this file are functions that would otherwise
  * clutter up Alan's quite pretty hw2.c 
  * 
- * It is mostly anciliary functions and sem1 style tests.
+ * It is mostly anciliary functions.
  *
  */
 
 #include <stdbool.h>
+#include <stdlib.h>
 #include <stdio.h>
 #include <assert.h>
 
@@ -15,16 +16,15 @@
 bool isLeapYear (int year) {
     
     bool result;
-    result = 1;
     
     if ((year % 400) == 0) {
-        result = 1;
-    } else if ((year % 100) ==0) {
-        result = 0;
-    } else if ((year % 4) ==0){
-        result = 1;
+        result = true;
+    } else if ((year % 100) == 0) {
+        result = false;
+    } else if ((year % 4) == 0){
+        result = true;
     } else {
-        result = 0;
+        result = false;
     }
     
     return result;
@@ -34,7 +34,7 @@ void printList ( MsgNode head) {
     
     while (head != NULL) {
         amIFocused(head);
-        printBrief(head);
+        printBrief(head, false);
         head = head->next;
     }
     
@@ -42,9 +42,9 @@ void printList ( MsgNode head) {
 
 void amIFocused (MsgNode msg) {
     if (msg -> focus == true) {
-        printf(" --> ");
+        printf("-> ");
     } else {
-        printf("     ");
+        printf("   ");
     }
     
 }
@@ -67,6 +67,45 @@ MsgNode findFocus (MsgNode head) {
     assert(focusCount == 1 || globalMessageNum == 0);
     
     return focus;
+}
+
+void relinker (TinyNode head, MsgNode node) {
+    //implementation of the function using extra tree
+    if (head -> contents == NULL) { //initialisation
+        head -> contents = node;
+        head -> msgID = node -> messageNum;
+    } else if (node -> inReplyTo > 0) {
+        assert(node -> inReplyTo < globalMessageNum);
+        for (; head -> msgID != node -> inReplyTo; head = head -> next);
+        head -> next = calloc(1, sizeof(struct tinyNode));
+        head = head -> next;
+        head -> contents = node;
+        head -> msgID = node -> messageNum;
+    } else { //case where its just an a
+        for (; head -> next != NULL; head = head -> next);
+        head -> next = calloc(1, sizeof(struct tinyNode));
+        head = head -> next;
+        head -> contents = node;
+        head -> msgID = node -> messageNum;
+    }
+}
+
+
+void printTree (TinyNode head) {
+    //printing the node tree
+    while (head != NULL) {
+        amIFocused(head -> contents);
+        printBrief(head -> contents, true);
+        head = head -> next;
+    }
+}
+
+void printIndent (int indent) {
+    int i = 0;
+    while (i < indent * 3) {
+        printf(" ");
+        i++;
+    }
 }
 
 /** inserts a node after another (the focus).

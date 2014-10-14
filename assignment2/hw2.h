@@ -15,9 +15,6 @@
 #include <stdbool.h>
 #include <time.h>
 
-#define TRUE           1
-#define FALSE          0
-
 #define MAX_LINE     256
 #define MAX_TEXT    4096
 
@@ -26,6 +23,7 @@ extern int globalMessageNum;
 typedef struct date    *Date;
 typedef struct time    *Time;
 typedef struct msgNode *MsgNode;
+typedef struct tinyNode *TinyNode;
 
 struct date {
     int day;
@@ -52,6 +50,12 @@ struct msgNode {
     MsgNode next;
 };
 
+struct tinyNode {
+    int msgID;
+    MsgNode contents;
+    TinyNode next;
+};
+
 // INSERT NEW FUNCTION PROTOTYPES, AS APPROPRIATE
 
 void printPrompt();
@@ -68,7 +72,7 @@ int       timeOK( Time t );
 void printPadded( int n );
 void   printDate( Date d );
 void   printTime( Time t );
-void  printBrief( MsgNode msg );
+void  printBrief( MsgNode msg, bool t );
 void   printFull( MsgNode msg );
 void    freeList( MsgNode head );
 
@@ -81,8 +85,13 @@ bool isLeapYear (int year);
 void printList (MsgNode head);
 void amIFocused (MsgNode msg);
 MsgNode findFocus (MsgNode head);
+void relinker (TinyNode head, MsgNode node);
+void printTree (TinyNode head);
+void printIndent (int indent);
 void insertNode (MsgNode focus, MsgNode node);
 MsgNode sherlock (MsgNode list, int msgID);
+int sniffer (MsgNode list, int repID);
+MsgNode* bloodhound (MsgNode list, int repID);
 MsgNode addReply (MsgNode list, MsgNode focus);
 
 // Don't touch below this point.
