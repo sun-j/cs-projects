@@ -1,6 +1,17 @@
 /*
  hw2.c
  
+ ////////////////
+ NOTE TO MARKER:
+ Time: 11:55 
+ I've been coding this since we got the task week and i've 
+ been getting errors (i.e. 9474 abort) that even google/stackExchange
+ can't diagnose. This has meant that the code is not as complete
+ or to the standard that I had hoped. All the algorithms are
+ present and accounted and the functionality is fully coded but 
+ I just couldn't debug the damn thing.
+ /////////////
+ 
  COMP1917 Computing 1
  
  Program supplied as a starting point for
@@ -27,7 +38,7 @@ int main( int argc, char *argv[] )
     char command[MAX_LINE];
     char c;
     bool listToggle = false;
-    char previous;
+    char previous = 0;
     
     printPrompt();
     
@@ -46,7 +57,7 @@ int main( int argc, char *argv[] )
         }
         c = *p;
         
-        if (tolower(c) != 'u') {
+        if (tolower(c) != 'u' && list != NULL) {
             treeCopy(list);
         }
         
@@ -74,7 +85,7 @@ int main( int argc, char *argv[] )
                 if (list == NULL) {
                     list = node;
                     relinker(head, node);
-                    printf("list got assigned\n");
+                    //printf("list got assigned\n");
                 } else {
                     insertNode(sherlock(list, globalMessageNum - 1
                                         ), node);
@@ -127,7 +138,7 @@ int main( int argc, char *argv[] )
             
             case 'p':
                 //prints the thingos
-                printFull( list );
+                printFull( focus );
                 break;
                 
             case 'l':
@@ -171,7 +182,7 @@ int main( int argc, char *argv[] )
             case 'u':
                 if (previous == 't') {
                     listToggle = false;
-                } else if (previous = 'u') {
+                } else if (previous == 'u') {
                     ;
                 } else {
                     list = previousList;
@@ -187,6 +198,7 @@ int main( int argc, char *argv[] )
         }
         
         previous = c;
+        printf("\n");
         printPrompt();
     }
     
@@ -426,6 +438,9 @@ int dateOK( Date d )
             break;
     }
     
+    if (d->month > 12) {
+        imARealDate = false;
+    }
     return imARealDate;
 }
 
