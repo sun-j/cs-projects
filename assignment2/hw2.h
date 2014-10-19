@@ -14,6 +14,14 @@
 
 #include <stdbool.h>
 #include <time.h>
+#include <string.h>
+#include <assert.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <ctype.h>
+
+
 
 #define MAX_LINE     256
 #define MAX_TEXT    4096
@@ -90,9 +98,12 @@ void printTree (TinyNode head);
 void printIndent (int indent);
 void insertNode (MsgNode focus, MsgNode node);
 MsgNode sherlock (MsgNode list, int msgID);
-int sniffer (MsgNode list, int repID);
-MsgNode* bloodhound (MsgNode list, int repID);
+TinyNode bloodhound (TinyNode list, int repID);
 MsgNode addReply (MsgNode list, MsgNode focus);
+MsgNode addNode (MsgNode list, MsgNode focus);
+char *getString (void);
+void searchNodes (MsgNode list, char *string);
+MsgNode treeCopy(MsgNode list);
 
 // Don't touch below this point.
 #endif /* !defined(HW2_H) */
