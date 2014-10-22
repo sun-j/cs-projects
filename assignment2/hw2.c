@@ -169,6 +169,7 @@ int main( int argc, char *argv[] )
                 break;
             
             case 's':
+                searchNodes(list, getString());
                 break;
             
             case 'u':

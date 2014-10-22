@@ -106,6 +106,8 @@ void insertNode (MsgNode focus, MsgNode node);
 MsgNode sherlock (MsgNode list, int msgID);
 TinyNode bloodhound (TinyNode head, int repID);
 MsgNode addReply (MsgNode list, MsgNode focus);
+char *getString (void);
+void searchNodes (MsgNode list, char *string);
 
 // Don't touch below this point.
 #endif /* !defined(HW2_H) */
