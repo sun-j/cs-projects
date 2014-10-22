@@ -6,8 +6,12 @@
  *
  */
 
-#include "hw2.h"
+#include <stdbool.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <assert.h>
 
+#include "hw2.h"
 
 bool isLeapYear (int year) {
     
@@ -36,10 +40,8 @@ void printList ( MsgNode head) {
     
 }
 
-
-//helper function
 void amIFocused (MsgNode msg) {
-    if (msg->focus == true) {
+    if (msg -> focus == true) {
         printf("-> ");
     } else {
         printf("   ");
@@ -47,9 +49,6 @@ void amIFocused (MsgNode msg) {
     
 }
 
-/** this function finds where the arrow goes (aka the focus) if
- * the function happens to go astray.
- */
 MsgNode findFocus (MsgNode head) {
     MsgNode focus = head;
     int focusCount = 0;
@@ -57,12 +56,12 @@ MsgNode findFocus (MsgNode head) {
     do {
         if (head == NULL) {
             break;
-        } else if (head->focus == true) {
+        } else if (head -> focus == true) {
             focus = head;
             focusCount++;
         }
         
-        head = head->next;
+        head = head -> next;
     } while (head != '\0');
     
     assert(focusCount == 1 || globalMessageNum == 0);
@@ -70,42 +69,34 @@ MsgNode findFocus (MsgNode head) {
     return focus;
 }
 
-/** this function links the new node into the tree-view
- * tree.
- */
 void relinker (TinyNode head, MsgNode node) {
     //implementation of the function using extra tree
-    if (head->contents == NULL) { //initialisation
-        head->contents = node;
-        head->msgID = node->messageNum;
-    } else if (node->inReplyTo > 0) {
-        TinyNode temp;
-        assert(node->inReplyTo < globalMessageNum);
-        for (; head->msgID != node->inReplyTo; head = head->next);
-        temp = calloc(1, sizeof(struct tinyNode));
-        temp->next = head->next;
-        head->next = temp;
-        head = head->next;
-        head->contents = node;
-        head->msgID = node->messageNum;
+    if (head -> contents == NULL) { //initialisation
+        head -> contents = node;
+        head -> msgID = node -> messageNum;
+    } else if (node -> inReplyTo > 0) {
+        assert(node -> inReplyTo < globalMessageNum);
+        for (; head -> msgID != node -> inReplyTo; head = head -> next);
+        head -> next = calloc(1, sizeof(struct tinyNode));
+        head = head -> next;
+        head -> contents = node;
+        head -> msgID = node -> messageNum;
     } else { //case where its just an a
-        for (; head->next != NULL; head = head->next);
-        head->next = calloc(1, sizeof(struct tinyNode));
-        head = head->next;
-        head->contents = node;
-        head->msgID = node->messageNum;
+        for (; head -> next != NULL; head = head -> next);
+        head -> next = calloc(1, sizeof(struct tinyNode));
+        head = head -> next;
+        head -> contents = node;
+        head -> msgID = node -> messageNum;
     }
 }
 
-/** prints the tree.
- *
- */
+
 void printTree (TinyNode head) {
     //printing the node tree
     while (head != NULL) {
-        amIFocused(head->contents);
-        printBrief(head->contents, true);
-        head = head->next;
+        amIFocused(head -> contents);
+        printBrief(head -> contents, true);
+        head = head -> next;
     }
 }
 
@@ -125,9 +116,9 @@ void insertNode ( MsgNode focus, MsgNode node )
     if (focus == NULL) {
         focus = node;
     } else {
-        MsgNode next_node = focus->next;
+        MsgNode next_node = focus -> next;
         focus->next = node;
-        node->next = next_node;
+        node -> next = next_node;
     }
     
     
@@ -140,21 +131,8 @@ MsgNode sherlock (MsgNode list, int msgID) {
     MsgNode target = list;
     int i = 1; //globalMessageCount starts at 1...
     while (i < msgID) {
-        target = target->next;
-        i++;
-    }
-    
-    return target;
-}
-
-/** just like its sister function, bloodhound scans along the 
- * TinyNode struct to find the pointer to the tinyNode the repID
- * referring to.
- */
-TinyNode bloodhound (TinyNode head, int repID) {
-    TinyNode target = head;
-    while (target->msgID != repID) {
         target = target -> next;
+        i++;
     }
     
     return target;
@@ -171,14 +149,14 @@ MsgNode addReply (MsgNode list, MsgNode focus) {
     
     MsgNode node;
     node = getNode();
-    node->focus = true;
-    node->inReplyTo = focus->messageNum;
-    node->indent = focus->indent + 1;
+    node -> focus = true;
+    node -> inReplyTo = focus -> messageNum;
+    node -> indent = focus -> indent + 1;
     printFull( node );
     
     insertNode(sherlock(list, globalMessageNum - 1
                         ), node);
-    focus->focus = false;
+    focus -> focus = false;
     return node;
 }
 
@@ -190,130 +168,21 @@ MsgNode addNode (MsgNode list, MsgNode focus) {
     
     node = getNode();
     printFull( node );
-    node->focus = true;
+    node -> focus = true;
     
     if (list == NULL) {
         list = node;
-        //printf("list got assigned\n");
+        printf("list got assigned\n");
     } else {
         //grrr... alan and his i++ usage.
         insertNode(sherlock(list, globalMessageNum - 1
                             ), node);
-        focus->focus = false;
+        focus -> focus = false;
     }
     
     return node;
 }
 
-
-char *getString (void) {
-    
-    char string[MAX_LINE];
-    char rawInput[MAX_LINE];
-    char c;
-    int i = 0;
-    int j = 0;
-    char *shortString;
-    
-    printf("Search Text: ");
-    
-    fgets(rawInput,MAX_LINE,stdin);
-    
-    while ( rawInput[j] != '\n' ) {
-        if (c >= ' ' && c < 127) {
-            string[i] = toupper(c);
-            i++;
-        }
-        j++;
-    }
-    string[i] = '\0'; //cap off the string
-    
-    
-    shortString = malloc(strlen(string)*sizeof(char));
-    for (i = 0; i < sizeof(string); i++) {
-        *(shortString+i) = string[i];
-    }
-    
-    return shortString;
-}
-
-void searchNodes (MsgNode list, char *string) {
-    
-    MsgNode head = list;
-    int i = 0;
-    MsgNode toPrint = calloc(1, sizeof(struct msgNode));
-    
-    while (head != NULL) {
-        char name[strlen(head->name)];
-        char *substituteName = malloc(strlen(head->text)*sizeof(char));
-        strcpy(name, head->name);
-        strcpy(substituteName, head->name);
-        
-        char message[sizeof(head->text)];
-        char *substituteMessage = malloc(strlen(head->text)*sizeof(char));
-        strcpy(message, head->text);
-        strcpy(substituteMessage, head->text);
-        
-        bool match = false;
-        
-        
-        //control sequence for name
-        for (i = 0; i < strlen(name); i++) {
-            name[i] = toupper(name[i]);
-        }
-        
-        for (i = 0; i < abs(sizeof(head->name)-sizeof(string)); i++) {
-            if (memcmp(name, &string, sizeof(string)) == 0) {
-                strcpy((substituteName+i), string);
-                match = true;
-            }
-        }
-        
-        //control sequence for message
-        for (i = 0; i < strlen(message); i++) {
-            message[i] = toupper(message[i]);
-        }
-        
-        for (i = 0; i < abs(sizeof(head->text)-sizeof(message)); i++) {
-            if (memcmp(name, &string, sizeof(string)) == 0) {
-                strcpy((substituteMessage+i), string);
-                match = true;
-            }
-        }
-        
-        if (match) {
-            memcpy(toPrint, head, sizeof(struct msgNode));
-            toPrint->name = substituteName;
-            toPrint->text = substituteMessage;
-        }
-        
-        head = head->next;
-        free(substituteMessage);
-        free(substituteName);
-    }
-    
-    free(string);
-    free(toPrint);
-}
-
-//implementation of the 'u' command
-MsgNode treeCopy(MsgNode list) {
-    MsgNode top = calloc(1, sizeof(struct msgNode));
-    memcpy(top, list, sizeof(struct msgNode));
-    
-    MsgNode node;
-    MsgNode prev = top;
-    
-    while (list != NULL) {
-        node = calloc(1, sizeof(struct msgNode));
-        memcpy(top, list, sizeof(struct msgNode));
-        prev->next = node;
-        prev = node;
-        list = list -> next;
-    }
-    
-    return top;
-}
 
 
 // Local Variables:
