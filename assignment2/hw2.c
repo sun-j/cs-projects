@@ -52,7 +52,10 @@ int main( int argc, char *argv[] )
             if (temp > globalMessageNum) {
                 printf("message %d doesn't exist\n", temp);
             } else {
-                printFull(sherlock(list, temp));
+                focus->focus = false;
+                focus = sherlock(list, temp);
+                focus->focus = true;
+                printExpected(list, head, focus, printType);
             }
         }
         else switch(tolower(c)) {
@@ -90,16 +93,18 @@ int main( int argc, char *argv[] )
                     focus -> focus = false;
                     focus = focus -> next;
                     focus -> focus = true;
-                    printList(list);
+                    printExpected(list, head, focus, printType);
                 }
                 break;
             
             case 'b':
                 //moves back
-                focus -> focus = false;
-                focus = sherlock(list, ((focus -> messageNum) - 1));
-                focus -> focus = true;
-                printList(list);
+                if (focus != list) {
+                    focus -> focus = false;
+                    focus = sherlock(list, ((focus -> messageNum) - 1));
+                    focus -> focus = true;
+                    printExpected(list, head, focus, printType);
+                }
                 break;
             
             case 'p':
@@ -122,6 +127,7 @@ int main( int argc, char *argv[] )
             case 'd':
                 //delete message
                 focus -> deleted = true;
+                printExpected(list, head, focus, printType);
                 break;
             
             case 'r':
