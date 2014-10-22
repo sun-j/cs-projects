@@ -26,8 +26,9 @@
 #define MAX_TEXT    4096
 
 #define PLIST 0
-#define PFULL 1
-#define PTREE 2
+#define PTREE 1
+#define PFULL 2
+
 
 extern int globalMessageNum;
 
@@ -103,8 +104,7 @@ void printExpected (MsgNode list, TinyNode head,
                     MsgNode focus, int printType);
 void insertNode (MsgNode focus, MsgNode node);
 MsgNode sherlock (MsgNode list, int msgID);
-int sniffer (MsgNode list, int repID);
-MsgNode* bloodhound (MsgNode list, int repID);
+TinyNode bloodhound (TinyNode head, int repID);
 MsgNode addReply (MsgNode list, MsgNode focus);
 
 // Don't touch below this point.

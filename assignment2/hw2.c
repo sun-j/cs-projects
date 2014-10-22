@@ -26,6 +26,7 @@ int main( int argc, char *argv[] )
     char command[MAX_LINE];
     char c;
     int printType = PFULL;
+    int mode = PLIST;
     
     printPrompt();
     
@@ -89,22 +90,42 @@ int main( int argc, char *argv[] )
                 //thankyou alan;
             case 'f':
                 //moves forward
-                if (focus -> next != NULL) {
+                
+                if (mode == PTREE &&
+                    bloodhound(head, focus->messageNum)->next != NULL) {
+                    focus->focus = false;
+                    focus = bloodhound(head, focus->messageNum)->next->contents;
+                    focus->focus = true;
+                } else if (focus->next != NULL) {
                     focus -> focus = false;
                     focus = focus -> next;
                     focus -> focus = true;
-                    printExpected(list, head, focus, printType);
                 }
+                
+                printExpected(list, head, focus, printType);
+                
                 break;
             
             case 'b':
                 //moves back
-                if (focus != list) {
+                
+                if (focus == list) {
+                    break;
+                }
+                
+                if (mode == PTREE) {
+                    focus->focus = false;
+                    focus = sherlock(list, focus->inReplyTo);
+                    focus->focus = true;
+                } else {
                     focus -> focus = false;
                     focus = sherlock(list, ((focus -> messageNum) - 1));
                     focus -> focus = true;
-                    printExpected(list, head, focus, printType);
+                    
                 }
+                
+                printExpected(list, head, focus, printType);
+                
                 break;
             
             case 'p':
@@ -116,7 +137,8 @@ int main( int argc, char *argv[] )
             case 'l':
                 //lists the thingos
                 printList( list );
-                printType = PLIST;
+                printType = mode = PLIST;
+                
                 break;
                 
             case 'h':
@@ -143,7 +165,7 @@ int main( int argc, char *argv[] )
                     printTree(head);
                 }
                 
-                printType = PTREE;
+                printType = mode = PTREE;
                 break;
             
             case 's':

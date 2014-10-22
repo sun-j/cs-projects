@@ -66,22 +66,25 @@ MsgNode findFocus (MsgNode head) {
 
 void relinker (TinyNode head, MsgNode node) {
     //implementation of the function using extra tree
-    if (head -> contents == NULL) { //initialisation
-        head -> contents = node;
-        head -> msgID = node -> messageNum;
-    } else if (node -> inReplyTo > 0) {
-        assert(node -> inReplyTo < globalMessageNum);
-        for (; head -> msgID != node -> inReplyTo; head = head -> next);
-        head -> next = calloc(1, sizeof(struct tinyNode));
-        head = head -> next;
-        head -> contents = node;
-        head -> msgID = node -> messageNum;
+    if (head->contents == NULL) { //initialisation
+        head->contents = node;
+        head->msgID = node->messageNum;
+    } else if (node->inReplyTo > 0) {
+        TinyNode temp;
+        assert(node->inReplyTo < globalMessageNum);
+        for (; head->msgID != node->inReplyTo; head = head->next);
+        temp = calloc(1, sizeof(struct tinyNode));
+        temp->next = head->next;
+        head->next = temp;
+        head = head->next;
+        head->contents = node;
+        head->msgID = node->messageNum;
     } else { //case where its just an a
-        for (; head -> next != NULL; head = head -> next);
-        head -> next = calloc(1, sizeof(struct tinyNode));
-        head = head -> next;
-        head -> contents = node;
-        head -> msgID = node -> messageNum;
+        for (; head->next != NULL; head = head->next);
+        head->next = calloc(1, sizeof(struct tinyNode));
+        head = head->next;
+        head->contents = node;
+        head->msgID = node->messageNum;
     }
 }
 
@@ -125,12 +128,10 @@ void insertNode ( MsgNode focus, MsgNode node )
     if (focus == NULL) {
         focus = node;
     } else {
-        MsgNode next_node = focus -> next;
+        MsgNode next_node = focus->next;
         focus->next = node;
-        node -> next = next_node;
+        node->next = next_node;
     }
-    
-    
 }
 
 /** just like eponymous hero, this function searches along the list
@@ -147,6 +148,19 @@ MsgNode sherlock (MsgNode list, int msgID) {
     return target;
 }
 
+/** just like its sister function, bloodhound scans along the
+ * TinyNode struct to find the pointer to the tinyNode the repID
+ * referring to.
+ */
+TinyNode bloodhound (TinyNode head, int repID) {
+    TinyNode target = head;
+    while (target->msgID != repID) {
+        target = target -> next;
+    }
+    
+    return target;
+}
+
 /** Function to reply to a focused message. Takes in a list and focus
  * returns the address of the node.
  */
@@ -158,14 +172,14 @@ MsgNode addReply (MsgNode list, MsgNode focus) {
     
     MsgNode node;
     node = getNode();
-    node -> focus = true;
-    node -> inReplyTo = focus -> messageNum;
-    node -> indent = focus -> indent + 1;
-    printFull( node );
+    node->focus = true;
+    node->inReplyTo = focus->messageNum;
+    node->indent = focus->indent + 1;
     
     insertNode(sherlock(list, globalMessageNum - 1
                         ), node);
-    focus -> focus = false;
+    
+    focus->focus = false;
     return node;
 }
 
