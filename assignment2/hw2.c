@@ -12,13 +12,6 @@
  UNSW Session 2, 2014
  */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <ctype.h>
-#include <unistd.h>
-#include <time.h>
-
 #include "hw2.h"
 
 int globalMessageNum = 0;
@@ -32,14 +25,7 @@ int main( int argc, char *argv[] )
     TinyNode head = calloc(1, sizeof(struct tinyNode));
     char command[MAX_LINE];
     char c;
-    /** Idiot Prevention Code
-     * the following variables are variables that are used to
-     * counter non-algorithmic issues that arose during
-     * testing i.e. output doesn't match standard output.
-     */
-    //as soon as b was pressed once, every time
-    //a was pressed, it would always printBrief()
-    bool idiotBack = false;
+    int printType = PFULL;
     
     printPrompt();
     
@@ -76,7 +62,6 @@ int main( int argc, char *argv[] )
             case 'a': // Add item
                 // MODIFY THIS CODE, AS APPROPRIATE
                 node = getNode();
-                printFull( node );
                 node -> focus = true;
                 
                 if (list == NULL) {
@@ -91,10 +76,7 @@ int main( int argc, char *argv[] )
                     focus = node;
                 }
                 
-                if (idiotBack) {
-                    printList(list);
-                }
-                
+                printExpected(list, head, node, printType);
                 break;
                 
                 // INSERT CODE HERE
@@ -117,22 +99,23 @@ int main( int argc, char *argv[] )
                 focus -> focus = false;
                 focus = sherlock(list, ((focus -> messageNum) - 1));
                 focus -> focus = true;
-                idiotBack = true;
                 printList(list);
                 break;
             
             case 'p':
                 //prints the thingos
-                printFull( list );
+                printFull( focus );
+                printType = PFULL;
                 break;
                 
             case 'l':
                 //lists the thingos
                 printList( list );
+                printType = PLIST;
                 break;
                 
             case 'h':
-                // Help
+                // Help Me!
                 printHelp();
                 break;
                 
@@ -145,11 +128,7 @@ int main( int argc, char *argv[] )
                 //reply to a message
                 focus = addReply(list, focus);
                 relinker(head, focus);
-                
-                if (idiotBack) {
-                    printList(list);
-                }
-                
+                printExpected(list, head, focus, printType);
                 break;
             
             case 't':
@@ -158,6 +137,7 @@ int main( int argc, char *argv[] )
                     printTree(head);
                 }
                 
+                printType = PTREE;
                 break;
             
             case 's':

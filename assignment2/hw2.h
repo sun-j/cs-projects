@@ -12,11 +12,22 @@
 #ifndef HW2_H
 #define HW2_H
 
+#include <stdio.h>
+#include <stdlib.h>
 #include <stdbool.h>
+#include <string.h>
+#include <ctype.h>
+#include <unistd.h>
 #include <time.h>
+#include <assert.h>
+
 
 #define MAX_LINE     256
 #define MAX_TEXT    4096
+
+#define PLIST 0
+#define PFULL 1
+#define PTREE 2
 
 extern int globalMessageNum;
 
@@ -88,6 +99,8 @@ MsgNode findFocus (MsgNode head);
 void relinker (TinyNode head, MsgNode node);
 void printTree (TinyNode head);
 void printIndent (int indent);
+void printExpected (MsgNode list, TinyNode head,
+                    MsgNode focus, int printType);
 void insertNode (MsgNode focus, MsgNode node);
 MsgNode sherlock (MsgNode list, int msgID);
 int sniffer (MsgNode list, int repID);

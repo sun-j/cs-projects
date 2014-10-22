@@ -6,11 +6,6 @@
  *
  */
 
-#include <stdbool.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <assert.h>
-
 #include "hw2.h"
 
 bool isLeapYear (int year) {
@@ -108,6 +103,20 @@ void printIndent (int indent) {
     }
 }
 
+void printExpected (MsgNode list, TinyNode head,
+                    MsgNode focus, int printType) {
+    switch (printType) {
+        case PFULL:
+            printFull(focus);
+            break;
+        case PLIST:
+            printList(list);
+            break;
+        case PTREE:
+            printTree(head);
+            break;
+    }
+}
 /** inserts a node after another (the focus).
  *
  */
