@@ -74,6 +74,7 @@ void relinker (TinyNode head, MsgNode node) {
         assert(node->inReplyTo < globalMessageNum);
         for (; head->msgID != node->inReplyTo; head = head->next);
         temp = calloc(1, sizeof(struct tinyNode));
+        temp->prev = head;
         temp->next = head->next;
         head->next = temp;
         head = head->next;
@@ -82,6 +83,7 @@ void relinker (TinyNode head, MsgNode node) {
     } else { //case where its just an a
         for (; head->next != NULL; head = head->next);
         head->next = calloc(1, sizeof(struct tinyNode));
+        head->next->prev = head;
         head = head->next;
         head->contents = node;
         head->msgID = node->messageNum;

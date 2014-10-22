@@ -23,6 +23,7 @@ int main( int argc, char *argv[] )
     MsgNode node;
     MsgNode focus;
     TinyNode head = calloc(1, sizeof(struct tinyNode));
+    Ghost undoHelper = calloc(1, sizeof(struct ghosts));
     char command[MAX_LINE];
     char c;
     int printType = PFULL;
@@ -49,6 +50,7 @@ int main( int argc, char *argv[] )
         if( isdigit(c)) {
             //printf("%d\n", atoi(&c);
             // INSERT CODE FOR JUMPING TO MESSAGE k
+            undoHelper->focus = focus->messageNum;
             int temp = c - '0';
             if (temp > globalMessageNum) {
                 printf("message %d doesn't exist\n", temp);
@@ -68,11 +70,13 @@ int main( int argc, char *argv[] )
                 node = getNode();
                 node -> focus = true;
                 
+                
                 if (list == NULL) {
                     list = node;
                     relinker(head, node);
                     //printf("list got assigned\n");
                 } else {
+                    undoHelper->focus = focus->messageNum;
                     insertNode(sherlock(list, globalMessageNum - 1
                                         ), node);
                     relinker(head, node);
@@ -90,6 +94,7 @@ int main( int argc, char *argv[] )
                 //thankyou alan;
             case 'f':
                 //moves forward
+                undoHelper->focus = focus->messageNum;
                 
                 if (mode == PTREE &&
                     bloodhound(head, focus->messageNum)->next != NULL) {
@@ -100,6 +105,9 @@ int main( int argc, char *argv[] )
                     focus -> focus = false;
                     focus = focus -> next;
                     focus -> focus = true;
+                } else {
+                    undoHelper->blank = true;
+                    break;
                 }
                 
                 printExpected(list, head, focus, printType);
@@ -108,8 +116,10 @@ int main( int argc, char *argv[] )
             
             case 'b':
                 //moves back
+                undoHelper->focus = focus->messageNum;
                 
                 if (focus == list) {
+                    undoHelper->blank = true;
                     break;
                 }
                 
@@ -130,12 +140,17 @@ int main( int argc, char *argv[] )
             
             case 'p':
                 //prints the thingos
+                undoHelper->printType = printType;
+                
                 printFull( focus );
                 printType = PFULL;
                 break;
                 
             case 'l':
                 //lists the thingos
+                undoHelper->printMode = mode;
+                undoHelper->printType = printType;
+                
                 printList( list );
                 printType = mode = PLIST;
                 
@@ -154,6 +169,7 @@ int main( int argc, char *argv[] )
             
             case 'r':
                 //reply to a message
+                undoHelper->focus = focus->messageNum;
                 focus = addReply(list, focus);
                 relinker(head, focus);
                 printExpected(list, head, focus, printType);
@@ -161,6 +177,8 @@ int main( int argc, char *argv[] )
             
             case 't':
                 //toggle t mode
+                undoHelper->printMode = mode;
+                undoHelper->printType = printType;
                 if (list != NULL) {
                     printTree(head);
                 }
@@ -173,6 +191,48 @@ int main( int argc, char *argv[] )
                 break;
             
             case 'u':
+                //(A,B,F,P,L,D,R,T,)
+                if (undoHelper->blank == true) {
+                    undoHelper->blank = false;
+                    break;
+                } else if (undoHelper->command == 'a' || undoHelper->command == 'r') {
+                    focus->focus = false;
+                    node = focus->next;
+                    int beforeFocus = bloodhound(head, focus->messageNum)->prev->msgID;
+                    
+                    if (focus->messageNum != globalMessageNum) {
+                        bloodhound(head, focus->messageNum)->next->prev =
+                            bloodhound(head, focus->messageNum)->prev;
+                        //
+                        bloodhound(head, focus->messageNum)->prev->next =
+                            bloodhound(head, focus->messageNum)->next;
+                    }
+                    
+                    free(bloodhound(head, focus->messageNum));
+                    bloodhound(head, beforeFocus)->next = NULL;
+                    
+                    free(focus);
+                    focus = sherlock(list, undoHelper->focus);
+                    focus->focus = true;
+                    focus->next = node;
+                    globalMessageNum--;
+                } else if (undoHelper->command == 'b' ||
+                           undoHelper->command == 'f' ||
+                           isdigit(undoHelper->command)) {
+                    focus->focus = false;
+                    focus = sherlock(list, undoHelper->focus);
+                    focus->focus = true;
+                } else if (undoHelper->command == 'p' ||
+                           undoHelper->command == 'l'||
+                           undoHelper->command == 't') {
+                    printType = undoHelper->printType;
+                    mode = undoHelper->printMode;
+                } else if (undoHelper->command == 'd') {
+                    focus->deleted = false;
+                }
+                
+                printExpected(list, head, focus, printType);
+                
                 break;
             case 'q':
                 // Quit
@@ -182,6 +242,7 @@ int main( int argc, char *argv[] )
                 break;
         }
         
+        undoHelper->command = tolower(c);
         putchar('\n');
         printPrompt();
     }

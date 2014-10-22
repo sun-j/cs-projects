@@ -36,6 +36,7 @@ typedef struct date    *Date;
 typedef struct time    *Time;
 typedef struct msgNode *MsgNode;
 typedef struct tinyNode *TinyNode;
+typedef struct ghosts *Ghost;
 
 struct date {
     int day;
@@ -63,9 +64,18 @@ struct msgNode {
 };
 
 struct tinyNode {
+    TinyNode prev;
     int msgID;
     MsgNode contents;
     TinyNode next;
+};
+
+struct ghosts {
+    char printMode;
+    char printType;
+    int focus;
+    char command;
+    bool blank;
 };
 
 // INSERT NEW FUNCTION PROTOTYPES, AS APPROPRIATE
