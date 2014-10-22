@@ -1,17 +1,6 @@
 /*
  hw2.c
  
- ////////////////
- NOTE TO MARKER:
- Time: 11:55 
- I've been coding this since we got the task week and i've 
- been getting errors (i.e. 9474 abort) that even google/stackExchange
- can't diagnose. This has meant that the code is not as complete
- or to the standard that I had hoped. All the algorithms are
- present and accounted and the functionality is fully coded but 
- I just couldn't debug the damn thing.
- /////////////
- 
  COMP1917 Computing 1
  
  Program supplied as a starting point for
@@ -23,6 +12,13 @@
  UNSW Session 2, 2014
  */
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+#include <unistd.h>
+#include <time.h>
+
 #include "hw2.h"
 
 int globalMessageNum = 0;
@@ -31,20 +27,26 @@ int globalMessageNum = 0;
 int main( int argc, char *argv[] )
 {
     MsgNode list = NULL;
-    MsgNode previousList;
     MsgNode node;
     MsgNode focus;
     TinyNode head = calloc(1, sizeof(struct tinyNode));
     char command[MAX_LINE];
     char c;
-    bool listToggle = false;
-    char previous = 0;
+    /** Idiot Prevention Code
+     * the following variables are variables that are used to
+     * counter non-algorithmic issues that arose during
+     * testing i.e. output doesn't match standard output.
+     */
+    //as soon as b was pressed once, every time
+    //a was pressed, it would always printBrief()
+    bool idiotBack = false;
     
     printPrompt();
     
     // enter a loop, reading and executing commands from the user
     while( fgets(command,MAX_LINE,stdin) != NULL ) {
         char *p;
+        
         focus = findFocus(list);
         
         // replace newline with end-of-string character
@@ -57,19 +59,14 @@ int main( int argc, char *argv[] )
         }
         c = *p;
         
-        if (tolower(c) != 'u' && list != NULL) {
-            treeCopy(list);
-        }
-        
         if( isdigit(c)) {
             //printf("%d\n", atoi(&c);
             // INSERT CODE FOR JUMPING TO MESSAGE k
-            int n;
-            sscanf( command,"%d",&n );
-            if (n > globalMessageNum) {
-                printf("message %d doesn't exist\n", n);
+            int temp = c - '0';
+            if (temp > globalMessageNum) {
+                printf("message %d doesn't exist\n", temp);
             } else {
-                printFull(sherlock(list, n));
+                printFull(sherlock(list, temp));
             }
         }
         else switch(tolower(c)) {
@@ -80,18 +77,22 @@ int main( int argc, char *argv[] )
                 // MODIFY THIS CODE, AS APPROPRIATE
                 node = getNode();
                 printFull( node );
-                node->focus = true;
+                node -> focus = true;
                 
                 if (list == NULL) {
                     list = node;
                     relinker(head, node);
-                    //printf("list got assigned\n");
+                    printf("list got assigned\n");
                 } else {
                     insertNode(sherlock(list, globalMessageNum - 1
                                         ), node);
                     relinker(head, node);
-                    focus->focus = false;
+                    focus -> focus = false;
                     focus = node;
+                }
+                
+                if (idiotBack) {
+                    printList(list);
                 }
                 
                 break;
@@ -103,47 +104,30 @@ int main( int argc, char *argv[] )
                 //thankyou alan;
             case 'f':
                 //moves forward
-                if (focus->next == NULL) {
-                    break;
-                } else if (listToggle) {
-                    focus->focus = false;
-                    focus = bloodhound(head, focus->messageNum)->next->contents;
-                    focus->focus = true;
-                    printTree(head);
-                } else {
-                    focus->focus = false;
-                    focus = focus->next;
-                    focus->focus = true;
+                if (focus -> next != NULL) {
+                    focus -> focus = false;
+                    focus = focus -> next;
+                    focus -> focus = true;
                     printList(list);
                 }
                 break;
             
             case 'b':
                 //moves back
-                if (list == NULL) {
-                    break;
-                }
-                
-                focus->focus = false;
-                if (listToggle) {
-                    focus = sherlock(list, focus->inReplyTo);
-                    focus->focus = true;
-                    printTree(head);
-                } else {
-                    focus = sherlock(list, ((focus->messageNum) - 1));
-                    focus->focus = true;
-                    printList(list);
-                }
+                focus -> focus = false;
+                focus = sherlock(list, ((focus -> messageNum) - 1));
+                focus -> focus = true;
+                idiotBack = true;
+                printList(list);
                 break;
             
             case 'p':
                 //prints the thingos
-                printFull( focus );
+                printFull( list );
                 break;
                 
             case 'l':
                 //lists the thingos
-                listToggle = false;
                 printList( list );
                 break;
                 
@@ -154,7 +138,7 @@ int main( int argc, char *argv[] )
                 
             case 'd':
                 //delete message
-                focus->deleted = true;
+                focus -> deleted = true;
                 break;
             
             case 'r':
@@ -162,12 +146,14 @@ int main( int argc, char *argv[] )
                 focus = addReply(list, focus);
                 relinker(head, focus);
                 
+                if (idiotBack) {
+                    printList(list);
+                }
+                
                 break;
             
             case 't':
                 //toggle t mode
-                listToggle = true;
-                
                 if (list != NULL) {
                     printTree(head);
                 }
@@ -175,20 +161,10 @@ int main( int argc, char *argv[] )
                 break;
             
             case 's':
-                //This segment implements the search functionality.
-                searchNodes(list, getString());
                 break;
             
             case 'u':
-                if (previous == 't') {
-                    listToggle = false;
-                } else if (previous == 'u') {
-                    ;
-                } else {
-                    list = previousList;
-                }
                 break;
-                
             case 'q':
                 // Quit
                 freeList( list );
@@ -197,8 +173,6 @@ int main( int argc, char *argv[] )
                 break;
         }
         
-        previous = c;
-        printf("\n");
         printPrompt();
     }
     
@@ -438,9 +412,6 @@ int dateOK( Date d )
             break;
     }
     
-    if (d->month > 12) {
-        imARealDate = false;
-    }
     return imARealDate;
 }
 
@@ -505,7 +476,7 @@ void printBrief( MsgNode msg , bool t)
     }
     else {
         if (t == true) {
-            printIndent(msg->indent);
+            printIndent(msg -> indent);
         }
         printf("%s: ", msg->name );
         while( isspace( text[i] )) {
