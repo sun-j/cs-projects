@@ -172,7 +172,7 @@ MsgNode addNode (MsgNode list, MsgNode focus) {
     
     if (list == NULL) {
         list = node;
-        printf("list got assigned\n");
+        //printf("list got assigned\n");
     } else {
         //grrr... alan and his i++ usage.
         insertNode(sherlock(list, globalMessageNum - 1

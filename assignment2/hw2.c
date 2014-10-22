@@ -82,7 +82,7 @@ int main( int argc, char *argv[] )
                 if (list == NULL) {
                     list = node;
                     relinker(head, node);
-                    printf("list got assigned\n");
+                    //printf("list got assigned\n");
                 } else {
                     insertNode(sherlock(list, globalMessageNum - 1
                                         ), node);
@@ -173,6 +173,7 @@ int main( int argc, char *argv[] )
                 break;
         }
         
+        putchar('\n');
         printPrompt();
     }
     
@@ -384,35 +385,38 @@ int scanTime( Time t )
  */
 int dateOK( Date d )
 {
-    int imARealDate = true;
     
     if (d->day <= 0||d->month <= 0||d->year < 0) {
+        return false;
+    }
+    
+    if (d->month > 12) {
         return false;
     }
     
     switch (d->month) {
         case 4: case 6: case 9: case 11:
             if (d->day>30) {
-                imARealDate = false;
+                return false;
             }
             break;
         case 2:
             if (isLeapYear(d->year)) {
                 if (d->day > 29) {
-                    imARealDate = false;
+                    return false;
                 }
             } else if (d->day > 28) {
-                imARealDate = false;
+                return false;
             }
             break;
         default:
             if (d->day > 31) {
-                imARealDate = false;
+                return false;
             }
             break;
     }
     
-    return imARealDate;
+    return true;
 }
 
 /************************************************************

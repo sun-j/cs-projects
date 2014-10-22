@@ -9,5 +9,5 @@ CFLAGS	?= -Wall -Wextra -pedantic -g -O2 -std=c99
 	@echo "	CC $<"
 	@$(CC) -c $< $(CFLAGS)
 
-all: hw2
+all: hw2.out
 hw2: extras.o 
