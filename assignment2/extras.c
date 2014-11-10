@@ -8,7 +8,6 @@
 
 #include "hw2.h"
 
-
 bool isLeapYear (int year) {
     
     bool result;
@@ -36,10 +35,8 @@ void printList ( MsgNode head) {
     
 }
 
-
-//helper function
 void amIFocused (MsgNode msg) {
-    if (msg->focus == true) {
+    if (msg -> focus == true) {
         printf("-> ");
     } else {
         printf("   ");
@@ -47,9 +44,6 @@ void amIFocused (MsgNode msg) {
     
 }
 
-/** this function finds where the arrow goes (aka the focus) if
- * the function happens to go astray.
- */
 MsgNode findFocus (MsgNode head) {
     MsgNode focus = head;
     int focusCount = 0;
@@ -57,12 +51,12 @@ MsgNode findFocus (MsgNode head) {
     do {
         if (head == NULL) {
             break;
-        } else if (head->focus == true) {
+        } else if (head -> focus == true) {
             focus = head;
             focusCount++;
         }
         
-        head = head->next;
+        head = head -> next;
     } while (head != '\0');
     
     assert(focusCount == 1 || globalMessageNum == 0);
@@ -70,9 +64,6 @@ MsgNode findFocus (MsgNode head) {
     return focus;
 }
 
-/** this function links the new node into the tree-view
- * tree.
- */
 void relinker (TinyNode head, MsgNode node) {
     //implementation of the function using extra tree
     if (head->contents == NULL) { //initialisation
@@ -82,6 +73,7 @@ void relinker (TinyNode head, MsgNode node) {
         TinyNode temp;
         assert(node->inReplyTo < globalMessageNum);
         for (; head->msgID != node->inReplyTo; head = head->next);
+        for (; head->next->contents->inReplyTo == node->inReplyTo; head = head->next);
         temp = calloc(1, sizeof(struct tinyNode));
         temp->next = head->next;
         head->next = temp;
@@ -97,15 +89,13 @@ void relinker (TinyNode head, MsgNode node) {
     }
 }
 
-/** prints the tree.
- *
- */
+
 void printTree (TinyNode head) {
     //printing the node tree
     while (head != NULL) {
-        amIFocused(head->contents);
-        printBrief(head->contents, true);
-        head = head->next;
+        amIFocused(head -> contents);
+        printBrief(head -> contents, true);
+        head = head -> next;
     }
 }
 
@@ -117,6 +107,20 @@ void printIndent (int indent) {
     }
 }
 
+void printExpected (MsgNode list, TinyNode head,
+                    MsgNode focus, int printType) {
+    switch (printType) {
+        case PFULL:
+            printFull(focus);
+            break;
+        case PLIST:
+            printList(list);
+            break;
+        case PTREE:
+            printTree(head);
+            break;
+    }
+}
 /** inserts a node after another (the focus).
  *
  */
@@ -129,8 +133,6 @@ void insertNode ( MsgNode focus, MsgNode node )
         focus->next = node;
         node->next = next_node;
     }
-    
-    
 }
 
 /** just like eponymous hero, this function searches along the list
@@ -140,14 +142,14 @@ MsgNode sherlock (MsgNode list, int msgID) {
     MsgNode target = list;
     int i = 1; //globalMessageCount starts at 1...
     while (i < msgID) {
-        target = target->next;
+        target = target -> next;
         i++;
     }
     
     return target;
 }
 
-/** just like its sister function, bloodhound scans along the 
+/** just like its sister function, bloodhound scans along the
  * TinyNode struct to find the pointer to the tinyNode the repID
  * referring to.
  */
@@ -174,10 +176,10 @@ MsgNode addReply (MsgNode list, MsgNode focus) {
     node->focus = true;
     node->inReplyTo = focus->messageNum;
     node->indent = focus->indent + 1;
-    printFull( node );
     
     insertNode(sherlock(list, globalMessageNum - 1
                         ), node);
+    
     focus->focus = false;
     return node;
 }
@@ -190,7 +192,7 @@ MsgNode addNode (MsgNode list, MsgNode focus) {
     
     node = getNode();
     printFull( node );
-    node->focus = true;
+    node -> focus = true;
     
     if (list == NULL) {
         list = node;
@@ -199,38 +201,35 @@ MsgNode addNode (MsgNode list, MsgNode focus) {
         //grrr... alan and his i++ usage.
         insertNode(sherlock(list, globalMessageNum - 1
                             ), node);
-        focus->focus = false;
+        focus -> focus = false;
     }
     
     return node;
 }
 
-
 char *getString (void) {
     
     char string[MAX_LINE];
-    char rawInput[MAX_LINE];
     char c;
     int i = 0;
-    int j = 0;
     char *shortString;
     
-    printf("Search Text: ");
+    printf("Search text: ");
     
-    fgets(rawInput,MAX_LINE,stdin);
+    putchar('\n');
     
-    while ( rawInput[j] != '\n' ) {
+    while ((c=getchar()) != '\n') {
         if (c >= ' ' && c < 127) {
             string[i] = toupper(c);
             i++;
         }
-        j++;
     }
+    
     string[i] = '\0'; //cap off the string
     
     
     shortString = malloc(strlen(string)*sizeof(char));
-    for (i = 0; i < sizeof(string); i++) {
+    for (i = 0; i < (int) strlen(string); i++) {
         *(shortString+i) = string[i];
     }
     
@@ -244,40 +243,41 @@ void searchNodes (MsgNode list, char *string) {
     MsgNode toPrint = calloc(1, sizeof(struct msgNode));
     
     while (head != NULL) {
-        char name[strlen(head->name)];
+        char name[MAX_LINE];
         char *substituteName = malloc(strlen(head->text)*sizeof(char));
         strcpy(name, head->name);
         strcpy(substituteName, head->name);
         
-        char message[sizeof(head->text)];
+        char message[MAX_TEXT];
         char *substituteMessage = malloc(strlen(head->text)*sizeof(char));
         strcpy(message, head->text);
         strcpy(substituteMessage, head->text);
         
         bool match = false;
         
-        
         //control sequence for name
-        for (i = 0; i < strlen(name); i++) {
+        for (i = 0; i < (int) strlen(name); i++) {
             name[i] = toupper(name[i]);
         }
         
-        for (i = 0; i < abs(sizeof(head->name)-sizeof(string)); i++) {
-            if (memcmp(name, &string, sizeof(string)) == 0) {
-                strcpy((substituteName+i), string);
+        for (i = 0; i < (int) strlen(substituteName); i++) {
+            if (strncmp(&name[i], string, strlen(string)) == 0) {
+                memcpy((substituteName+i), string, strlen(string));
                 match = true;
+                i+=strlen(string);
             }
         }
         
         //control sequence for message
-        for (i = 0; i < strlen(message); i++) {
+        for (i = 0; i < (int) strlen(message); i++) {
             message[i] = toupper(message[i]);
         }
         
-        for (i = 0; i < abs(sizeof(head->text)-sizeof(message)); i++) {
-            if (memcmp(name, &string, sizeof(string)) == 0) {
-                strcpy((substituteMessage+i), string);
+        for (i = 0; i < (int) strlen(substituteMessage); i++) {
+            if (strncmp(&message[i], string, strlen(string)) == 0) {
+                memcpy((substituteMessage+i), string, strlen(string));
                 match = true;
+                i+=strlen(string);
             }
         }
         
@@ -285,6 +285,7 @@ void searchNodes (MsgNode list, char *string) {
             memcpy(toPrint, head, sizeof(struct msgNode));
             toPrint->name = substituteName;
             toPrint->text = substituteMessage;
+            printFull(toPrint);
         }
         
         head = head->next;
@@ -296,25 +297,41 @@ void searchNodes (MsgNode list, char *string) {
     free(toPrint);
 }
 
-//implementation of the 'u' command
-MsgNode treeCopy(MsgNode list) {
-    MsgNode top = calloc(1, sizeof(struct msgNode));
-    memcpy(top, list, sizeof(struct msgNode));
+/** This function removes a node from the tinyNode
+ * tree. 
+ */
+void exciseTiny (TinyNode head, int msgID) {
+    TinyNode curr, prev;
     
-    MsgNode node;
-    MsgNode prev = top;
+    curr = prev = head;
     
-    while (list != NULL) {
-        node = calloc(1, sizeof(struct msgNode));
-        memcpy(top, list, sizeof(struct msgNode));
-        prev->next = node;
-        prev = node;
-        list = list -> next;
+    while (curr->msgID != msgID) {
+        prev = curr;
+        curr = curr->next;
     }
     
-    return top;
+    prev->next = curr->next;
+    
+    free(curr);
 }
 
+/** This function removes a node from the msgNode
+ * tree.
+ */
+void exciseMsg (MsgNode head, int msgID) {
+    MsgNode curr, prev;
+    
+    curr = prev = head;
+    
+    while (curr->messageNum != msgID) {
+        prev = curr;
+        curr = curr->next;
+    }
+    
+    prev->next = curr->next;
+    
+    free(curr);
+}
 
 // Local Variables:
 // c-basic-offset: 4

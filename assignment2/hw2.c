@@ -1,17 +1,6 @@
 /*
  hw2.c
  
- ////////////////
- NOTE TO MARKER:
- Time: 11:55 
- I've been coding this since we got the task week and i've 
- been getting errors (i.e. 9474 abort) that even google/stackExchange
- can't diagnose. This has meant that the code is not as complete
- or to the standard that I had hoped. All the algorithms are
- present and accounted and the functionality is fully coded but 
- I just couldn't debug the damn thing.
- /////////////
- 
  COMP1917 Computing 1
  
  Program supplied as a starting point for
@@ -31,20 +20,21 @@ int globalMessageNum = 0;
 int main( int argc, char *argv[] )
 {
     MsgNode list = NULL;
-    MsgNode previousList;
     MsgNode node;
     MsgNode focus;
     TinyNode head = calloc(1, sizeof(struct tinyNode));
+    Ghost undoHelper = calloc(1, sizeof(struct ghosts));
     char command[MAX_LINE];
     char c;
-    bool listToggle = false;
-    char previous = 0;
+    int printType = PFULL;
+    int mode = PLIST;
     
     printPrompt();
     
     // enter a loop, reading and executing commands from the user
     while( fgets(command,MAX_LINE,stdin) != NULL ) {
         char *p;
+        
         focus = findFocus(list);
         
         // replace newline with end-of-string character
@@ -57,19 +47,18 @@ int main( int argc, char *argv[] )
         }
         c = *p;
         
-        if (tolower(c) != 'u' && list != NULL) {
-            treeCopy(list);
-        }
-        
         if( isdigit(c)) {
             //printf("%d\n", atoi(&c);
             // INSERT CODE FOR JUMPING TO MESSAGE k
-            int n;
-            sscanf( command,"%d",&n );
-            if (n > globalMessageNum) {
-                printf("message %d doesn't exist\n", n);
+            undoHelper->focus = focus->messageNum;
+            int temp = c - '0';
+            if (temp > globalMessageNum) {
+                printf("message %d doesn't exist\n", temp);
             } else {
-                printFull(sherlock(list, n));
+                focus->focus = false;
+                focus = sherlock(list, temp);
+                focus->focus = true;
+                printExpected(list, head, focus, printType);
             }
         }
         else switch(tolower(c)) {
@@ -79,21 +68,23 @@ int main( int argc, char *argv[] )
             case 'a': // Add item
                 // MODIFY THIS CODE, AS APPROPRIATE
                 node = getNode();
-                printFull( node );
-                node->focus = true;
+                node -> focus = true;
+                
                 
                 if (list == NULL) {
                     list = node;
                     relinker(head, node);
                     //printf("list got assigned\n");
                 } else {
+                    undoHelper->focus = focus->messageNum;
                     insertNode(sherlock(list, globalMessageNum - 1
                                         ), node);
                     relinker(head, node);
-                    focus->focus = false;
+                    focus -> focus = false;
                     focus = node;
                 }
                 
+                printExpected(list, head, node, printType);
                 break;
                 
                 // INSERT CODE HERE
@@ -103,92 +94,136 @@ int main( int argc, char *argv[] )
                 //thankyou alan;
             case 'f':
                 //moves forward
-                if (focus->next == NULL) {
-                    break;
-                } else if (listToggle) {
+                undoHelper->focus = focus->messageNum;
+                
+                if (mode == PTREE &&
+                    bloodhound(head, focus->messageNum)->next != NULL) {
                     focus->focus = false;
                     focus = bloodhound(head, focus->messageNum)->next->contents;
                     focus->focus = true;
-                    printTree(head);
+                } else if (focus->next != NULL) {
+                    focus -> focus = false;
+                    focus = focus -> next;
+                    focus -> focus = true;
                 } else {
-                    focus->focus = false;
-                    focus = focus->next;
-                    focus->focus = true;
-                    printList(list);
+                    undoHelper->blank = true;
+                    break;
                 }
+                
+                printExpected(list, head, focus, printType);
+                
                 break;
             
             case 'b':
                 //moves back
-                if (list == NULL) {
+                undoHelper->focus = focus->messageNum;
+                
+                if (focus == list) {
+                    undoHelper->blank = true;
                     break;
                 }
                 
-                focus->focus = false;
-                if (listToggle) {
+                if (mode == PTREE) {
+                    focus->focus = false;
                     focus = sherlock(list, focus->inReplyTo);
                     focus->focus = true;
-                    printTree(head);
                 } else {
-                    focus = sherlock(list, ((focus->messageNum) - 1));
-                    focus->focus = true;
-                    printList(list);
+                    focus -> focus = false;
+                    focus = sherlock(list, ((focus -> messageNum) - 1));
+                    focus -> focus = true;
+                    
                 }
+                
+                printExpected(list, head, focus, printType);
+                
                 break;
             
             case 'p':
                 //prints the thingos
+                undoHelper->printType = printType;
+                
                 printFull( focus );
+                printType = PFULL;
                 break;
                 
             case 'l':
                 //lists the thingos
-                listToggle = false;
+                undoHelper->printMode = mode;
+                undoHelper->printType = printType;
+                
                 printList( list );
+                printType = mode = PLIST;
+                
                 break;
                 
             case 'h':
-                // Help
+                // Help Me!
                 printHelp();
                 break;
                 
             case 'd':
                 //delete message
-                focus->deleted = true;
+                focus -> deleted = true;
+                printExpected(list, head, focus, printType);
                 break;
             
             case 'r':
                 //reply to a message
+                undoHelper->focus = focus->messageNum;
                 focus = addReply(list, focus);
                 relinker(head, focus);
-                
+                printExpected(list, head, focus, printType);
                 break;
             
             case 't':
                 //toggle t mode
-                listToggle = true;
-                
+                undoHelper->printMode = mode;
+                undoHelper->printType = printType;
                 if (list != NULL) {
                     printTree(head);
                 }
                 
+                printType = mode = PTREE;
                 break;
             
             case 's':
-                //This segment implements the search functionality.
                 searchNodes(list, getString());
                 break;
             
             case 'u':
-                if (previous == 't') {
-                    listToggle = false;
-                } else if (previous == 'u') {
-                    ;
-                } else {
-                    list = previousList;
+                //(A,B,F,P,L,D,R,T,)
+                if (undoHelper->blank == true) {
+                    undoHelper->blank = false;
+                    break;
+                } else if (undoHelper->command == 'a' || undoHelper->command == 'r') {
+                    focus->focus = false;
+                    
+                    exciseTiny(head, focus->messageNum);
+                    exciseMsg(list, focus->messageNum);
+                    
+                    focus = sherlock(list, undoHelper->focus);
+                    focus->focus = true;
+                    
+                    globalMessageNum--;
+                    
+                } else if (undoHelper->command == 'b' ||
+                           undoHelper->command == 'f' ||
+                           isdigit(undoHelper->command)) {
+                    focus->focus = false;
+                    focus = sherlock(list, undoHelper->focus);
+                    focus->focus = true;
+                } else if (undoHelper->command == 'p' ||
+                           undoHelper->command == 'l'||
+                           undoHelper->command == 't') {
+                    printType = undoHelper->printType;
+                    mode = undoHelper->printMode;
+                } else if (undoHelper->command == 'd') {
+                    focus->deleted = false;
                 }
-                break;
                 
+                printExpected(list, head, focus, printType);
+                
+                break;
             case 'q':
                 // Quit
                 freeList( list );
@@ -197,8 +232,8 @@ int main( int argc, char *argv[] )
                 break;
         }
         
-        previous = c;
-        printf("\n");
+        undoHelper->command = tolower(c);
+        putchar('\n');
         printPrompt();
     }
     
@@ -410,38 +445,38 @@ int scanTime( Time t )
  */
 int dateOK( Date d )
 {
-    int imARealDate = true;
     
     if (d->day <= 0||d->month <= 0||d->year < 0) {
+        return false;
+    }
+    
+    if (d->month > 12) {
         return false;
     }
     
     switch (d->month) {
         case 4: case 6: case 9: case 11:
             if (d->day>30) {
-                imARealDate = false;
+                return false;
             }
             break;
         case 2:
             if (isLeapYear(d->year)) {
                 if (d->day > 29) {
-                    imARealDate = false;
+                    return false;
                 }
             } else if (d->day > 28) {
-                imARealDate = false;
+                return false;
             }
             break;
         default:
             if (d->day > 31) {
-                imARealDate = false;
+                return false;
             }
             break;
     }
     
-    if (d->month > 12) {
-        imARealDate = false;
-    }
-    return imARealDate;
+    return true;
 }
 
 /************************************************************
@@ -505,7 +540,7 @@ void printBrief( MsgNode msg , bool t)
     }
     else {
         if (t == true) {
-            printIndent(msg->indent);
+            printIndent(msg -> indent);
         }
         printf("%s: ", msg->name );
         while( isspace( text[i] )) {

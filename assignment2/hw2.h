@@ -12,19 +12,23 @@
 #ifndef HW2_H
 #define HW2_H
 
-#include <stdbool.h>
-#include <time.h>
-#include <string.h>
-#include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <unistd.h>
+#include <stdbool.h>
+#include <string.h>
 #include <ctype.h>
-
+#include <unistd.h>
+#include <time.h>
+#include <assert.h>
 
 
 #define MAX_LINE     256
 #define MAX_TEXT    4096
+
+#define PLIST 0
+#define PTREE 1
+#define PFULL 2
+
 
 extern int globalMessageNum;
 
@@ -32,6 +36,7 @@ typedef struct date    *Date;
 typedef struct time    *Time;
 typedef struct msgNode *MsgNode;
 typedef struct tinyNode *TinyNode;
+typedef struct ghosts *Ghost;
 
 struct date {
     int day;
@@ -62,6 +67,14 @@ struct tinyNode {
     int msgID;
     MsgNode contents;
     TinyNode next;
+};
+
+struct ghosts {
+    char printMode;
+    char printType;
+    int focus;
+    char command;
+    bool blank;
 };
 
 // INSERT NEW FUNCTION PROTOTYPES, AS APPROPRIATE
@@ -96,14 +109,16 @@ MsgNode findFocus (MsgNode head);
 void relinker (TinyNode head, MsgNode node);
 void printTree (TinyNode head);
 void printIndent (int indent);
+void printExpected (MsgNode list, TinyNode head,
+                    MsgNode focus, int printType);
 void insertNode (MsgNode focus, MsgNode node);
 MsgNode sherlock (MsgNode list, int msgID);
-TinyNode bloodhound (TinyNode list, int repID);
+TinyNode bloodhound (TinyNode head, int repID);
 MsgNode addReply (MsgNode list, MsgNode focus);
-MsgNode addNode (MsgNode list, MsgNode focus);
 char *getString (void);
 void searchNodes (MsgNode list, char *string);
-MsgNode treeCopy(MsgNode list);
+void exciseTiny (TinyNode head, int msgID);
+void exciseMsg (MsgNode head, int msgID);
 
 // Don't touch below this point.
 #endif /* !defined(HW2_H) */
