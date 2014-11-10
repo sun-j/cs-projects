@@ -75,7 +75,6 @@ void relinker (TinyNode head, MsgNode node) {
         for (; head->msgID != node->inReplyTo; head = head->next);
         for (; head->next->contents->inReplyTo == node->inReplyTo; head = head->next);
         temp = calloc(1, sizeof(struct tinyNode));
-        temp->prev = head;
         temp->next = head->next;
         head->next = temp;
         head = head->next;
@@ -84,7 +83,6 @@ void relinker (TinyNode head, MsgNode node) {
     } else { //case where its just an a
         for (; head->next != NULL; head = head->next);
         head->next = calloc(1, sizeof(struct tinyNode));
-        head->next->prev = head;
         head = head->next;
         head->contents = node;
         head->msgID = node->messageNum;
@@ -297,6 +295,42 @@ void searchNodes (MsgNode list, char *string) {
     
     free(string);
     free(toPrint);
+}
+
+/** This function removes a node from the tinyNode
+ * tree. 
+ */
+void exciseTiny (TinyNode head, int msgID) {
+    TinyNode curr, prev;
+    
+    curr = prev = head;
+    
+    while (curr->msgID != msgID) {
+        prev = curr;
+        curr = curr->next;
+    }
+    
+    prev->next = curr->next;
+    
+    free(curr);
+}
+
+/** This function removes a node from the msgNode
+ * tree.
+ */
+void exciseMsg (MsgNode head, int msgID) {
+    MsgNode curr, prev;
+    
+    curr = prev = head;
+    
+    while (curr->messageNum != msgID) {
+        prev = curr;
+        curr = curr->next;
+    }
+    
+    prev->next = curr->next;
+    
+    free(curr);
 }
 
 // Local Variables:

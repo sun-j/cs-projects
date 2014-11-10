@@ -197,33 +197,15 @@ int main( int argc, char *argv[] )
                     break;
                 } else if (undoHelper->command == 'a' || undoHelper->command == 'r') {
                     focus->focus = false;
-                    node = focus->next;
                     
-                    int beforeFocus = bloodhound(head, focus->messageNum)->prev->msgID;
-                    TinyNode toKill = bloodhound(head, focus->messageNum);
+                    exciseTiny(head, focus->messageNum);
+                    exciseMsg(list, focus->messageNum);
                     
-                    if (focus->messageNum != globalMessageNum) {
-                        bloodhound(head, focus->messageNum)->next->prev =
-                            bloodhound(head, focus->messageNum)->prev;
-                        //
-                        bloodhound(head, focus->messageNum)->prev->next =
-                            bloodhound(head, focus->messageNum)->next;
-                    } else {
-                        bloodhound(head, beforeFocus)->next = NULL;
-                    }
-
-                    free(toKill);
+                    focus = sherlock(list, undoHelper->focus);
+                    focus->focus = true;
                     
-                    free(focus);
-                    
-                    if (mode == PTREE) {
-                        
-                    } else {
-                        focus = sherlock(list, undoHelper->focus);
-                        focus->focus = true;
-                        focus->next = node;
-                    }
                     globalMessageNum--;
+                    
                 } else if (undoHelper->command == 'b' ||
                            undoHelper->command == 'f' ||
                            isdigit(undoHelper->command)) {

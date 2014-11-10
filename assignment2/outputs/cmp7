@@ -1,91 +1,24 @@
-1,90d0
-< Name: Date: Time: Text: 
-< Message 1
-< Date: 08/04/2014
-< Time: 23:58:34
-< Name: Hoki
-< Text: Put your left hand in
+8d7
 < 
+15d13
 < 
-< -> 1 Hoki: Put your left hand in
+24d21
 < 
-< Name: Date: Time: Text: 
-<    1 Hoki: Put your left hand in
-< -> 2 Hoki: Shake it all about
+29d25
 < 
+40d35
 < 
-< -> 1 Hoki: Put your left hand in
-<    2 Hoki: Shake it all about
+45d39
 < 
-< Name: Date: Time: Text: 
-<    1 Hoki: Put your left hand in
-<    2 Hoki: Shake it all about
-< -> 3 Koki: Put your left hand out
+50d43
 < 
+55d47
 < 
-<    1 Hoki: Put your left hand in
-< -> 3    Koki: Put your left hand out
-<    2 Hoki: Shake it all about
+66d57
 < 
+71d61
 < 
-< -> 1 Hoki: Put your left hand in
-<    3    Koki: Put your left hand out
-<    2 Hoki: Shake it all about
+78d67
 < 
-< Name: Date: Time: Text: 
-<    1 Hoki: Put your left hand in
-<    3    Koki: Put your left hand out
-< -> 4    Koki: Put your left leg in
-<    2 Hoki: Shake it all about
+83d71
 < 
-< 
-< -> 1 Hoki: Put your left hand in
-<    3    Koki: Put your left hand out
-<    2 Hoki: Shake it all about
-< 
-< 
-< -> 1 Hoki: Put your left hand in
-<    2 Hoki: Shake it all about
-<    3 Koki: Put your left hand out
-< 
-< 
-< -> 1 Hoki: Put your left hand in
-<    3    Koki: Put your left hand out
-<    2 Hoki: Shake it all about
-< 
-< 
-<    1 Hoki: Put your left hand in
-< -> 3    Koki: Put your left hand out
-<    2 Hoki: Shake it all about
-< 
-< Name: Date: Time: Text: 
-<    1 Hoki: Put your left hand in
-<    3    Koki: Put your left hand out
-< -> 4       Koki: Put your whole self in
-<    2 Hoki: Shake it all about
-< 
-< 
-<    1 Hoki: Put your left hand in
-< -> 3    Koki: Put your left hand out
-<    2 Hoki: Shake it all about
-< 
-< 
-< Message 3
-< Date: 09/04/2014
-< Time: 00:00:00
-< Name: Koki
-< Text: Put your left hand out
-< 
-< 
-<    1 Hoki: Put your left hand in
-< -> 3    Koki: Put your left hand out
-<    2 Hoki: Shake it all about
-< 
-< 
-< Message 3
-< Date: 09/04/2014
-< Time: 00:00:00
-< Name: Koki
-< Text: Put your left hand out
-< 
-< Bye!

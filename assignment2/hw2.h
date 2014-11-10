@@ -64,7 +64,6 @@ struct msgNode {
 };
 
 struct tinyNode {
-    TinyNode prev;
     int msgID;
     MsgNode contents;
     TinyNode next;
@@ -118,6 +117,8 @@ TinyNode bloodhound (TinyNode head, int repID);
 MsgNode addReply (MsgNode list, MsgNode focus);
 char *getString (void);
 void searchNodes (MsgNode list, char *string);
+void exciseTiny (TinyNode head, int msgID);
+void exciseMsg (MsgNode head, int msgID);
 
 // Don't touch below this point.
 #endif /* !defined(HW2_H) */
